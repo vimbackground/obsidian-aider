@@ -9,7 +9,7 @@ function TitleInput({
   onSubmit,
 }: {
   title: string
-  onSubmit: (title: string) => Promise<void>
+  onSubmit: (title: string) => void | Promise<void>
 }) {
   const [value, setValue] = useState(title)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -55,10 +55,10 @@ function ChatListItem({
   isFocused: boolean
   isEditing: boolean
   onMouseEnter: () => void
-  onSelect: () => Promise<void>
-  onDelete: () => Promise<void>
+  onSelect: () => void | Promise<void>
+  onDelete: () => void | Promise<void>
   onStartEdit: () => void
-  onFinishEdit: (title: string) => Promise<void>
+  onFinishEdit: (title: string) => void | Promise<void>
 }) {
   const itemRef = useRef<HTMLLIElement>(null)
 
@@ -73,7 +73,9 @@ function ChatListItem({
   return (
     <li
       ref={itemRef}
-      onClick={onSelect}
+      onClick={() => {
+        void onSelect()
+      }}
       onMouseEnter={onMouseEnter}
       className={isFocused ? 'selected' : ''}
     >
@@ -93,9 +95,9 @@ function ChatListItem({
           <Pencil />
         </button>
         <button
-          onClick={async (e) => {
+          onClick={(e) => {
             e.stopPropagation()
-            await onDelete()
+            void onDelete()
           }}
           className="clickable-icon aide-chat-list-dropdown-item-icon"
         >
@@ -183,19 +185,23 @@ export function ChatListDropdown({
                   onMouseEnter={() => {
                     setFocusedIndex(index)
                   }}
-                  onSelect={async () => {
-                    await onSelect(chat.id)
-                    setOpen(false)
+                  onSelect={() => {
+                    void (async () => {
+                      await onSelect(chat.id)
+                      setOpen(false)
+                    })()
                   }}
-                  onDelete={async () => {
-                    await onDelete(chat.id)
+                  onDelete={() => {
+                    void onDelete(chat.id)
                   }}
                   onStartEdit={() => {
                     setEditingId(chat.id)
                   }}
-                  onFinishEdit={async (title) => {
-                    await onUpdateTitle(chat.id, title)
-                    setEditingId(null)
+                  onFinishEdit={(title) => {
+                    void (async () => {
+                      await onUpdateTitle(chat.id, title)
+                      setEditingId(null)
+                    })()
                   }}
                 />
               ))

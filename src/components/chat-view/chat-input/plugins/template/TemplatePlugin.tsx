@@ -69,7 +69,7 @@ export default function TemplatePlugin() {
 
   useEffect(() => {
     if (queryString == null) return
-    templateManager.searchTemplates(queryString).then(setSearchResults)
+    void templateManager.searchTemplates(queryString).then(setSearchResults)
   }, [queryString, templateManager])
 
   const options = useMemo(

@@ -1,3 +1,33 @@
+# Release Notes: v0.13.3 - Obsidian Community Review Compliance & Security Hardening / 官方社区审核合规与安全加固
+
+## 🌐 English
+- **Obsidian Official Community Review Compliance**:
+  - Eliminated root-cause linter errors (`react-hooks/exhaustive-deps`) by annotating explicit justifications in accordance with Obsidian review guidelines.
+  - Standardized window/timer API calls across the plugin for seamless compatibility with Obsidian Popout multi-window contexts.
+  - Hardened asynchronous lifecycle and UI event handlers (`ObsidianButton`, `ObsidianToggle`, `ObsidianDropdown`, `ObsidianTextInput`, `ObsidianTextArea`, etc.) with safe `void` Promise resolution, completely resolving floating promise warnings.
+- **TypeScript Strong Typing & Quality Refactoring**:
+  - Refactored `MentionableBadge`, `mcpManager`, `gemini`, and migration scripts to eliminate unsafe `any` casts and member accesses.
+  - Enhanced `openMarkdownFile` signature to support both `TFile` and file path strings seamlessly.
+- **Dependency Security Patching**:
+  - Upgraded vulnerable dependencies including `uuid` (`^11.1.1`) and completed full `npm audit fix`.
+  - Cleaned up obsolete properties and debug logs across adapters.
+- **Version Bump**: Updated to version `0.13.3`.
+
+## 🇨🇳 中文说明
+- **Obsidian 官方社区审核全项合规化**：
+  - 修复硬阻断 ESLint 指令注释，补充明确规则声明与业务场景阐述，达到官方审查最高标准。
+  - 标准化定时器与动画帧 API，显式绑定至独立 `window` 上下文，彻底保障 Popout 多窗口环境下的运行稳定性。
+  - 深度重构底层基础交互组件（按钮、开关、下拉框、文本框）及业务组件生命周期的异步回调，统一采用安全的浮动 Promise 消费机制，消除所有 Promise 悬空警告。
+- **TypeScript 强类型重构与代码质量提升**：
+  - 全面消除 `MentionableBadge`、MCP 服务管理、Gemini 适配器及历史配置迁移脚本中的 `any` 与不安全类型断言，增强类型健壮性。
+  - 增强 `openMarkdownFile` 工具方法，无缝支持 `TFile` 对象与字符串路径双重传参。
+- **依赖安全加固与代码瘦身**：
+  - 升级 `uuid` 等核心依赖至安全版本 `^11.1.1`，完成完整依赖安全审计。
+  - 清理适配器中废弃的 `system_fingerprint` 赋值与冗余日志。
+- **版本更新**：版本号升级为 `0.13.3`。
+
+---
+
 # Release Notes: v0.13.2 - Template Modals Blank Bugfix & Stability / 模板弹窗空白修复与稳定性优化
 
 ## 🌐 English

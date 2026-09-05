@@ -79,7 +79,9 @@ export function RerankModelsSubSection({
                   <td>
                     <div className="aide-settings-actions">
                       <button
-                        onClick={() => handleDeleteRerankModel(item.id)}
+                        onClick={() => {
+                          void handleDeleteRerankModel(item.id)
+                        }}
                         className="clickable-icon"
                         title={language === 'zh' ? '删除' : 'Delete'}
                       >

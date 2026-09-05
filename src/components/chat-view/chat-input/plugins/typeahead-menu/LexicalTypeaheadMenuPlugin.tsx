@@ -67,7 +67,7 @@ function tryToPositionRange(
   try {
     range.setStart(anchorNode, startOffset)
     range.setEnd(anchorNode, endOffset)
-  } catch (_error) {
+  } catch {
     return false
   }
 

@@ -114,7 +114,7 @@ export function extractTextToolCalls(content: string): {
                 : JSON.stringify(parsed.arguments ?? {}),
           })
         }
-      } catch (_e) {
+      } catch {
         // Ignore malformed tool JSON
       }
     } else {

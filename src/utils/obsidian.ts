@@ -61,7 +61,7 @@ export function getOpenFiles(app: App): TFile[] {
     const leaves = app.workspace.getLeavesOfType('markdown')
 
     return leaves.map((v) => (v.view as MarkdownView).file).filter((v) => !!v)
-  } catch (_e) {
+  } catch {
     return []
   }
 }
@@ -73,40 +73,43 @@ export function calculateFileDistance(
   const path1 = file1.path.split('/')
   const path2 = file2.path.split('/')
 
-  // Check if files are in different top-level folders
+  // If files are on different root paths, return null
   if (path1[0] !== path2[0]) {
     return null
   }
 
-  let distance = 0
-  let i = 0
-
-  // Find the common ancestor
-  while (i < path1.length && i < path2.length && path1[i] === path2[i]) {
-    i++
+  // Find the common prefix length
+  let commonPrefixLength = 0
+  while (
+    commonPrefixLength < path1.length &&
+    commonPrefixLength < path2.length &&
+    path1[commonPrefixLength] === path2[commonPrefixLength]
+  ) {
+    commonPrefixLength++
   }
 
-  // Calculate distance from common ancestor to each file
-  distance += path1.length - i
-  distance += path2.length - i
 
+
+  // Calculate distance based on the remaining path components
+  const distance =
+    path1.length - commonPrefixLength + (path2.length - commonPrefixLength)
   return distance
 }
 
 export function openMarkdownFile(
   app: App,
-  filePath: string,
+  fileOrPath: TFile | string,
   startLine?: number,
-) {
-  const file = app.vault.getFileByPath(filePath)
+): void {
+  const file =
+    typeof fileOrPath === 'string'
+      ? app.vault.getFileByPath(fileOrPath)
+      : fileOrPath
   if (!file) return
 
   const existingLeaf = app.workspace
     .getLeavesOfType('markdown')
-    .find(
-      (leaf) =>
-        leaf.view instanceof MarkdownView && leaf.view.file?.path === file.path,
-    )
+    .find((leaf) => (leaf.view as MarkdownView).file?.path === file.path)
 
   if (existingLeaf) {
     app.workspace.setActiveLeaf(existingLeaf, { focus: true })
@@ -117,7 +120,7 @@ export function openMarkdownFile(
     }
   } else {
     const leaf = app.workspace.getLeaf('tab')
-    leaf.openFile(file, {
+    void leaf.openFile(file, {
       eState: startLine ? { line: startLine - 1 } : undefined, // -1 because line is 0-indexed
     })
   }

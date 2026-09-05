@@ -6,15 +6,15 @@ export type ConfirmModalOptions = {
   title: string
   message: string
   ctaText?: string
-  onConfirm: () => void
-  onCancel?: () => void
+  onConfirm: () => void | Promise<void>
+  onCancel?: () => void | Promise<void>
 }
 
 type ConfirmModalComponentProps = {
   message: string
   ctaText?: string
-  onConfirm: () => void
-  onCancel?: () => void
+  onConfirm: () => void | Promise<void>
+  onCancel?: () => void | Promise<void>
   onClose: () => void
 }
 
@@ -51,7 +51,7 @@ function ConfirmModalComponent({
           className="mod-warning"
           onClick={() => {
             onClose()
-            onConfirm()
+            void onConfirm()
           }}
         >
           {ctaText ?? 'Confirm'}
@@ -60,7 +60,7 @@ function ConfirmModalComponent({
           className="mod-cancel"
           onClick={() => {
             onClose()
-            onCancel?.()
+            if (onCancel) void onCancel()
           }}
         >
           Cancel

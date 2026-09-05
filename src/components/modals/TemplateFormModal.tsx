@@ -1,7 +1,7 @@
 import { $generateNodesFromSerializedNodes } from '@lexical/clipboard'
 import { BaseSerializedNode } from '@lexical/clipboard/clipboard'
 import { InitialEditorStateType } from '@lexical/react/LexicalComposer'
-import { $getRoot, $insertNodes, LexicalEditor } from 'lexical'
+import { $getRoot, LexicalEditor } from 'lexical'
 import { App, Notice } from 'obsidian'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -142,8 +142,7 @@ function TemplateFormComponent({
   const editorRef = useRef<LexicalEditor | null>(null)
   const contentEditableRef = useRef<HTMLDivElement>(null)
 
-  const [isLoadingTemplate, setIsLoadingTemplate] = useState(Boolean(templateId))
-  const existingNodesRef = useRef<any>(null)
+  const existingNodesRef = useRef<BaseSerializedNode[] | null>(null)
 
   const initialEditorState: InitialEditorStateType = (
     editor: LexicalEditor,
@@ -159,7 +158,7 @@ function TemplateFormComponent({
     })
   }
 
-  const applyNodesToEditor = (nodes: any[]) => {
+  const applyNodesToEditor = (nodes: BaseSerializedNode[]) => {
     if (!editorRef.current) return false
     try {
       editorRef.current.update(() => {
@@ -252,13 +251,13 @@ function TemplateFormComponent({
           if (!applied) {
             // If editor wasn't ready yet, poll every 50ms up to 15 times (750ms)
             let attempts = 0
-            const interval = setInterval(() => {
+            const interval = window.setInterval(() => {
               if (!isMountedRef.current || attempts++ > 15) {
-                clearInterval(interval)
+                window.clearInterval(interval)
                 return
               }
               if (existingNodesRef.current && applyNodesToEditor(existingNodesRef.current)) {
-                clearInterval(interval)
+                window.clearInterval(interval)
               }
             }, 50)
           }
@@ -270,15 +269,11 @@ function TemplateFormComponent({
             ? '加载模板失败，请重试。'
             : 'Failed to load template. Please try again.',
         )
-      } finally {
-        if (isMountedRef.current) {
-          setIsLoadingTemplate(false)
-        }
       }
     }
 
     if (templateId) {
-      fetchExistingTemplate(templateId)
+      void fetchExistingTemplate(templateId)
     }
 
     return () => {

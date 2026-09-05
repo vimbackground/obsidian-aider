@@ -46,17 +46,17 @@ export default function ToolBadge() {
       const tools = await mcpManager.listAvailableTools()
       setToolCount(tools.length)
     }
-    initMCPManager()
+    void initMCPManager()
   }, [getMcpManager])
 
   useEffect(() => {
     if (mcpManager) {
-      const unsubscribe = mcpManager.subscribeServersChange(
-        async (_servers) => {
+      const unsubscribe = mcpManager.subscribeServersChange((_servers) => {
+        void (async () => {
           const tools = await mcpManager.listAvailableTools()
           setToolCount(tools.length)
-        },
-      )
+        })()
+      })
       return () => {
         unsubscribe()
       }

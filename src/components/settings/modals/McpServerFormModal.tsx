@@ -148,7 +148,7 @@ function McpServerFormComponent({
         setValidationError('Parameters are required')
         return
       }
-      const parsedParameters = JSON.parse(parameters)
+      const parsedParameters = JSON.parse(parameters) as unknown
       mcpServerParametersSchema.strict().parse(parsedParameters)
       setValidationError(null)
     } catch (error) {

@@ -7,7 +7,7 @@ type ObsidianButtonProps = {
   text?: string
   icon?: string
   tooltip?: string
-  onClick: () => void
+  onClick: () => void | Promise<void>
   cta?: boolean
   warning?: boolean
   disabled?: boolean
@@ -55,7 +55,9 @@ export function ObsidianButton({
 
   useEffect(() => {
     if (!buttonComponent) return
-    buttonComponent.onClick(() => onClickRef.current())
+    buttonComponent.onClick(() => {
+      void onClickRef.current()
+    })
   }, [buttonComponent])
 
   useEffect(() => {

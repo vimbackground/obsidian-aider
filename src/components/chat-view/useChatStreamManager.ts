@@ -59,7 +59,7 @@ export function useChatStreamManager({
         settings,
         setSettings,
       })
-    } catch (error) {
+    } catch {
       return { providerClient: null, model: null }
     }
   }, [settings, setSettings])

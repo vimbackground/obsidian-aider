@@ -16,13 +16,11 @@ import { useApp } from '../../contexts/app-context'
 import { useMcp } from '../../contexts/mcp-context'
 import { useRAG } from '../../contexts/rag-context'
 import { useSettings } from '../../contexts/settings-context'
-import {
-  LLMAPIKeyInvalidException,
-  LLMAPIKeyNotSetException,
-  LLMBaseUrlNotSetException,
-} from '../../core/llm/exception'
 import { getChatModelClient } from '../../core/llm/manager'
-import { useChatHistory } from '../../hooks/useChatHistory'
+import {
+  ChatMetadataWithArticle,
+  useChatHistory,
+} from '../../hooks/useChatHistory'
 import {
   AssistantToolMessageGroup,
   ChatMessage,
@@ -41,9 +39,6 @@ import {
 } from '../../utils/chat/mentionable'
 import { groupAssistantAndToolMessages } from '../../utils/chat/message-groups'
 import { PromptGenerator } from '../../utils/chat/promptGenerator'
-import { readTFileContent } from '../../utils/obsidian'
-import { ErrorModal } from '../modals/ErrorModal'
-import { TemplateSectionModal } from '../modals/TemplateSectionModal'
 
 import AssistantToolMessageGroupItem from './AssistantToolMessageGroupItem'
 import ChatUserInput, { ChatUserInputRef } from './chat-input/ChatUserInput'
@@ -307,12 +302,13 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
             : `Title updated: ${generatedTitle}`,
         )
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to generate title:', err)
+      const message = err instanceof Error ? err.message : String(err)
       new Notice(
         language === 'zh'
-          ? `生成标题失败: ${err.message || err}`
-          : `Failed to generate title: ${err.message || err}`,
+          ? `生成标题失败: ${message}`
+          : `Failed to generate title: ${message}`,
       )
     } finally {
       setIsGeneratingTitle(false)
@@ -334,7 +330,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 
       // Update the chat history to show the new user message
       setChatMessages(inputChatMessages)
-      requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
         forceScrollToBottom()
       })
 
@@ -460,7 +456,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
           chatMessages: updatedMessages,
           conversationId: currentConversationId,
         })
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
           forceScrollToBottom()
         })
       }
@@ -507,11 +503,13 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
 
   useEffect(() => {
     setFocusedMessageId(inputMessage.id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only set focus to input message on initial mount
   }, [])
 
   const lastArticlePathRef = useRef<string | null>(null)
-  const [currentArticleChats, setCurrentArticleChats] = useState<any[]>([])
+  const [currentArticleChats, setCurrentArticleChats] = useState<
+    ChatMetadataWithArticle[]
+  >([])
 
   const refreshArticleChats = useCallback(
     async (filePath?: string) => {
@@ -691,9 +689,9 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
             {language === 'zh' ? '对话' : 'Chat'}
           </h1>
           <button
-            onClick={async () => {
+            onClick={() => {
               const nextLang = language === 'zh' ? 'en' : 'zh'
-              await setSettings({
+              void setSettings({
                 ...settings,
                 language: nextLang,
               })

@@ -1,4 +1,4 @@
-import { Check, Edit, PlusCircle, Trash2 } from 'lucide-react'
+import { Edit, PlusCircle, Trash2 } from 'lucide-react'
 import { App, Notice } from 'obsidian'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -89,7 +89,7 @@ export function TemplateSection({ app, onSelectTemplate }: TemplateSectionProps)
         onConfirm: async () => {
           try {
             await templateManager.deleteTemplate(template.id)
-            fetchTemplateList()
+            void fetchTemplateList()
           } catch (error) {
             console.error('Failed to delete template:', error)
             new Notice(
@@ -105,7 +105,7 @@ export function TemplateSection({ app, onSelectTemplate }: TemplateSectionProps)
   )
 
   useEffect(() => {
-    fetchTemplateList()
+    void fetchTemplateList()
   }, [fetchTemplateList])
 
   return (
@@ -132,7 +132,9 @@ export function TemplateSection({ app, onSelectTemplate }: TemplateSectionProps)
               key={template.id}
               template={template}
               isSelectMode={Boolean(onSelectTemplate)}
-              onSelect={() => handleSelect(template)}
+              onSelect={() => {
+                void handleSelect(template)
+              }}
               onDelete={() => {
                 handleDelete(template)
               }}

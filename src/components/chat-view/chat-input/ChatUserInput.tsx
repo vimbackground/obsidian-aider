@@ -1,7 +1,6 @@
 import { $generateNodesFromSerializedNodes } from '@lexical/clipboard'
 import { useQuery } from '@tanstack/react-query'
 import {
-  $getRoot,
   $insertNodes,
   $nodesOfType,
   LexicalEditor,

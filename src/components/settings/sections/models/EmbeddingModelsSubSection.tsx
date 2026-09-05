@@ -84,9 +84,9 @@ export function EmbeddingModelsSubSection({
                 <td>
                   <div className="aide-settings-actions">
                     <button
-                      onClick={() =>
-                        handleDeleteEmbeddingModel(embeddingModel.id)
-                      }
+                      onClick={() => {
+                        void handleDeleteEmbeddingModel(embeddingModel.id)
+                      }}
                       className="clickable-icon"
                       title={t('common.delete')}
                     >

@@ -46,7 +46,6 @@ export class DeepSeekMessageAdapter extends OpenAIMessageAdapter {
       created: response.created,
       model: response.model,
       object: 'chat.completion',
-      system_fingerprint: response.system_fingerprint,
       usage: response.usage,
     }
   }
@@ -76,7 +75,6 @@ export class DeepSeekMessageAdapter extends OpenAIMessageAdapter {
       created: chunk.created,
       model: chunk.model,
       object: 'chat.completion.chunk',
-      system_fingerprint: chunk.system_fingerprint,
       usage: chunk.usage ?? undefined,
     }
   }

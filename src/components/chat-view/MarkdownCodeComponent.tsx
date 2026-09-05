@@ -58,7 +58,9 @@ export default function MarkdownCodeComponent({
         <div className="aide-code-block-header-button-container">
           <button
             className="clickable-icon aide-code-block-header-button"
-            onClick={handleCopy}
+            onClick={() => {
+              void handleCopy()
+            }}
             title={languageSetting === 'zh' ? '复制代码' : 'Copy code'}
           >
             {copied ? (

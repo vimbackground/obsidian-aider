@@ -1,6 +1,6 @@
 {
   "name": "obsidian-aider",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "description": "轻量级 Obsidian AI 助手，专注文档查阅、编写与创作，支持多模型服务商与向量知识检索。",
   "main": "main.js",
   "scripts": {
@@ -72,7 +72,7 @@
     "react-dom": "^18.3.1",
     "react-syntax-highlighter": "^15.5.0",
     "react-textarea-autosize": "^8.5.9",
-    "uuid": "^10.0.0",
+    "uuid": "^11.1.1",
     "vscode-diff": "^2.1.1",
     "zod": "^3.23.8"
   }

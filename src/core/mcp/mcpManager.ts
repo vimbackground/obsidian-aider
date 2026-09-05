@@ -38,7 +38,7 @@ export class McpManager {
   }) {
     this.settings = settings
     this.unsubscribeFromSettings = registerSettingsListener((newSettings) => {
-      this.handleSettingsUpdate(newSettings)
+      void this.handleSettingsUpdate(newSettings)
     })
   }
 
@@ -146,11 +146,11 @@ export class McpManager {
     // 1. Builtin native tool execution (Zero Node.js dependency, works on all platforms)
     if (isBuiltinTool(name)) {
       try {
-        const parsedArgs: Record<string, any> =
+        const parsedArgs: Record<string, unknown> =
           typeof args === 'string'
             ? args === ''
               ? {}
-              : JSON.parse(args)
+              : (JSON.parse(args) as Record<string, unknown>)
             : (args ?? {})
         const textResult = await executeBuiltinTool(name, parsedArgs)
         return {

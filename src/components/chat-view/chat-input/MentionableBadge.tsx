@@ -57,8 +57,8 @@ function FileBadge({
   isFocused,
 }: {
   mentionable: MentionableFile
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -84,8 +84,8 @@ function FolderBadge({
   isFocused,
 }: {
   mentionable: MentionableFolder
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -111,8 +111,8 @@ function VaultBadge({
   isFocused,
 }: {
   mentionable: MentionableVault
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -138,8 +138,8 @@ function CurrentFileBadge({
   isFocused,
 }: {
   mentionable: MentionableCurrentFile
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const { settings, setSettings } = useSettings()
@@ -208,8 +208,8 @@ function BlockBadge({
   isFocused,
 }: {
   mentionable: MentionableBlock
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -238,8 +238,8 @@ function UrlBadge({
   isFocused,
 }: {
   mentionable: MentionableUrl
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -265,8 +265,8 @@ function ImageBadge({
   isFocused,
 }: {
   mentionable: MentionableImage
-  onDelete: () => void
-  onClick: () => void
+  onDelete?: () => void
+  onClick?: () => void
   isFocused: boolean
 }) {
   const Icon = getMentionableIcon(mentionable)
@@ -306,8 +306,8 @@ export default function MentionableBadge({
       return (
         <FileBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -315,8 +315,8 @@ export default function MentionableBadge({
       return (
         <FolderBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -324,8 +324,8 @@ export default function MentionableBadge({
       return (
         <VaultBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -333,8 +333,8 @@ export default function MentionableBadge({
       return (
         <CurrentFileBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -342,8 +342,8 @@ export default function MentionableBadge({
       return (
         <BlockBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -351,8 +351,8 @@ export default function MentionableBadge({
       return (
         <UrlBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )
@@ -360,8 +360,8 @@ export default function MentionableBadge({
       return (
         <ImageBadge
           mentionable={mentionable}
-          onDelete={effectiveOnDelete as any}
-          onClick={effectiveOnClick as any}
+          onDelete={effectiveOnDelete}
+          onClick={effectiveOnClick}
           isFocused={isFocused}
         />
       )

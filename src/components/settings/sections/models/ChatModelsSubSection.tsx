@@ -107,9 +107,9 @@ export function ChatModelsSubSection({
                 <td>
                   <ObsidianToggle
                     value={isEnabled(chatModel.enable)}
-                    onChange={(value) =>
-                      handleToggleEnableChatModel(chatModel.id, value)
-                    }
+                    onChange={(value) => {
+                      void handleToggleEnableChatModel(chatModel.id, value)
+                    }}
                   />
                 </td>
                 <td>
@@ -139,7 +139,9 @@ export function ChatModelsSubSection({
                       </button>
                     )}
                     <button
-                      onClick={() => handleDeleteChatModel(chatModel.id)}
+                      onClick={() => {
+                        void handleDeleteChatModel(chatModel.id)
+                      }}
                       className="clickable-icon"
                       title="删除模型"
                     >

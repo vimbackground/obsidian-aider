@@ -108,14 +108,15 @@ export class GeminiProvider extends BaseLLMProvider<
         messageId,
       )
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
       const isInvalidApiKey =
-        error.message?.includes('API_KEY_INVALID') ||
-        error.message?.includes('API key not valid')
+        errorMessage.includes('API_KEY_INVALID') ||
+        errorMessage.includes('API key not valid')
 
       if (isInvalidApiKey) {
         throw new LLMAPIKeyInvalidException(
           `Provider ${this.provider.id} API key is invalid. Please update it in settings menu.`,
-          error as Error,
+          error instanceof Error ? error : undefined,
         )
       }
 
@@ -168,14 +169,15 @@ export class GeminiProvider extends BaseLLMProvider<
       const messageId = crypto.randomUUID() // Gemini does not return a message id
       return this.streamResponseGenerator(stream, request.model, messageId)
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
       const isInvalidApiKey =
-        error.message?.includes('API_KEY_INVALID') ||
-        error.message?.includes('API key not valid')
+        errorMessage.includes('API_KEY_INVALID') ||
+        errorMessage.includes('API key not valid')
 
       if (isInvalidApiKey) {
         throw new LLMAPIKeyInvalidException(
           `Gemini API key is invalid. Please update it in settings menu.`,
-          error as Error,
+          error instanceof Error ? error : undefined,
         )
       }
 
@@ -248,7 +250,10 @@ export class GeminiProvider extends BaseLLMProvider<
           message.tool_calls.forEach((toolCall, index) => {
             let args: Record<string, unknown>
             try {
-              args = JSON.parse(toolCall.arguments ?? '{}')
+              args = JSON.parse(toolCall.arguments ?? '{}') as Record<
+                string,
+                unknown
+              >
             } catch {
               args = {}
             }

@@ -20,39 +20,47 @@ export const migrateFrom10To11: SettingMigration['migrate'] = (data) => {
 
   // Transform OpenAI models with reasoning_effort to new reasoning structure
   if ('chatModels' in newData && Array.isArray(newData.chatModels)) {
-    newData.chatModels = newData.chatModels.map((model) => {
-      if (model.providerType === 'openai' && 'reasoning_effort' in model) {
-        model = {
-          ...model,
-          reasoning: {
-            enabled: true,
-            reasoning_effort: model.reasoning_effort,
-          },
+    newData.chatModels = (newData.chatModels as Array<Record<string, unknown>>).map(
+      (rawModel) => {
+        const model = { ...rawModel }
+        if (model.providerType === 'openai' && 'reasoning_effort' in model) {
+          const reasoning_effort = model.reasoning_effort
+          delete model.reasoning_effort
+          return {
+            ...model,
+            reasoning: {
+              enabled: true,
+              reasoning_effort,
+            },
+          }
         }
-        delete model.reasoning_effort
-      }
-      return model as unknown
-    })
+        return model
+      },
+    )
   }
 
   // Transform Anthropic models with thinking.budget_tokens to new thinking structure
   if ('chatModels' in newData && Array.isArray(newData.chatModels)) {
-    newData.chatModels = newData.chatModels.map((model) => {
-      if (
-        model.providerType === 'anthropic' &&
-        'thinking' in model &&
-        'budget_tokens' in model.thinking
-      ) {
-        model = {
-          ...model,
-          thinking: {
-            enabled: true,
-            budget_tokens: model.thinking.budget_tokens,
-          },
+    newData.chatModels = (newData.chatModels as Array<Record<string, unknown>>).map(
+      (rawModel) => {
+        const model = { ...rawModel }
+        const thinking = model.thinking as { budget_tokens?: number } | undefined
+        if (
+          model.providerType === 'anthropic' &&
+          thinking &&
+          'budget_tokens' in thinking
+        ) {
+          return {
+            ...model,
+            thinking: {
+              enabled: true,
+              budget_tokens: thinking.budget_tokens,
+            },
+          }
         }
-      }
-      return model as unknown
-    })
+        return model
+      },
+    )
   }
 
   newData.chatModels = getMigratedChatModels(newData, DEFAULT_CHAT_MODELS_V11)

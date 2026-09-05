@@ -47,14 +47,16 @@ export default class SmartComposerPlugin extends Plugin {
     this.addCommand({
       id: 'open-new-chat',
       name: '打开对话 (Open chat)',
-      callback: () => this.openChatView(true),
+      callback: () => {
+        void this.openChatView(true)
+      },
     })
 
     this.addCommand({
       id: 'add-selection-to-chat',
       name: '将选中内容添加到对话 (Add selection to chat)',
       editorCallback: (editor: Editor, view: MarkdownView) => {
-        this.addSelectionToChat(editor, view)
+        void this.addSelectionToChat(editor, view)
       },
     })
 
@@ -146,13 +148,15 @@ export default class SmartComposerPlugin extends Plugin {
     if (this.indexTimeout) {
       window.clearTimeout(this.indexTimeout)
     }
-    this.indexTimeout = window.setTimeout(async () => {
-      try {
-        const ragEngine = await this.getRAGEngine()
-        await ragEngine.updateVaultIndex({ reindexAll: false })
-      } catch (e) {
-        console.error('Background index failed', e)
-      }
+    this.indexTimeout = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const ragEngine = await this.getRAGEngine()
+          await ragEngine.updateVaultIndex({ reindexAll: false })
+        } catch (e) {
+          console.error('Background index failed', e)
+        }
+      })()
     }, 5000) // 5 second debounce
   }
 
@@ -305,11 +309,11 @@ ${validationResult.error.issues.map((v) => v.message).join('\n')}`)
     const view = this.app.workspace.getActiveViewOfType(MarkdownView)
     const editor = view?.editor
     if (!view || !editor) {
-      this.activateChatView(undefined, openNewChat)
+      await this.activateChatView(undefined, openNewChat)
       return
     }
     const selectedBlockData = await getMentionableBlockData(editor, view)
-    this.activateChatView(
+    await this.activateChatView(
       {
         selectedBlock: selectedBlockData ?? undefined,
       },
@@ -332,7 +336,7 @@ ${validationResult.error.issues.map((v) => v.message).join('\n')}`)
       leaf.view.openNewChat(chatProps?.selectedBlock)
     }
 
-    this.app.workspace.revealLeaf(
+    void this.app.workspace.revealLeaf(
       this.app.workspace.getLeavesOfType(CHAT_VIEW_TYPE)[0],
     )
   }
@@ -493,7 +497,7 @@ ${validationResult.error.issues.map((v) => v.message).join('\n')}`)
           }
         }
       }
-    } catch (_e) {
+    } catch {
       // Ignored non-critical directory migration errors
     }
   }

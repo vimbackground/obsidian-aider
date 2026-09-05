@@ -17,9 +17,12 @@ function TemplateSectionModalWrapper({
   app,
   onSelectTemplate,
 }: TemplateSectionModalProps) {
-  const plugin = (app as any).plugins?.getPlugin?.('aider') as
-    | SmartComposerPlugin
-    | undefined
+  const appWithPlugins = app as unknown as {
+    plugins?: {
+      getPlugin?: (id: string) => SmartComposerPlugin | undefined
+    }
+  }
+  const plugin = appWithPlugins.plugins?.getPlugin?.('aider')
 
   if (plugin) {
     return (

@@ -596,9 +596,8 @@ export const V2_DEFAULT_EMBEDDING_MODELS: readonly V2EmbeddingModel[] = [
   },
 ]
 
-export const migrateFrom1To2: SettingMigration['migrate'] = (
-  data: SmartComposerSettingsV1,
-) => {
+export const migrateFrom1To2: SettingMigration['migrate'] = (rawData) => {
+  const data = smartComposerSettingsSchemaV1.parse(rawData)
   const providers: V2LLMProvider[] = [...V2_DEFAULT_PROVIDERS]
   const chatModels: V2ChatModel[] = [...V2_DEFAULT_CHAT_MODELS]
 

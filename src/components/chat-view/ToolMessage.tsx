@@ -4,7 +4,6 @@ import { memo, useCallback, useMemo, useState } from 'react'
 
 import { useMcp } from '../../contexts/mcp-context'
 import { useSettings } from '../../contexts/settings-context'
-import { InvalidToolNameException } from '../../core/mcp/exception'
 import { parseToolName } from '../../core/mcp/tool-name-utils'
 import { ChatToolMessage } from '../../types/chat'
 import {
@@ -132,26 +131,13 @@ function ToolCallItem({
     response.status === ToolCallResponseStatus.PendingApproval,
   )
 
-  const { serverName: _serverName, toolName: _toolName } = useMemo(() => {
-    try {
-      return parseToolName(request.name)
-    } catch (error) {
-      if (error instanceof InvalidToolNameException) {
-        return {
-          serverName: null,
-          toolName: request.name,
-        }
-      }
-      throw error
-    }
-  }, [request.name])
   const parameters = useMemo(() => {
     if (!request.arguments) {
       return 'No parameters'
     }
     try {
       return JSON.stringify(JSON.parse(request.arguments), null, 2)
-    } catch (_error) {
+    } catch {
       return request.arguments
     }
   }, [request.arguments])
@@ -178,20 +164,28 @@ function ToolCallItem({
         </div>
       </div>
       {isOpen && (
-        <div className="aide-toolcall-content">
-          <div className="aide-toolcall-content-section">
-            <div>Parameters:</div>
-            <ObsidianCodeBlock language="json" content={parameters} />
+        <div className="aide-toolcall-body">
+          <div className="aide-toolcall-body-section">
+            <div className="aide-toolcall-body-section-title">Parameters</div>
+            <ObsidianCodeBlock content={parameters} />
           </div>
           {response.status === ToolCallResponseStatus.Success && (
-            <div className="aide-toolcall-content-section">
-              <div>Result:</div>
-              <ObsidianCodeBlock content={response.data.text} />
+            <div className="aide-toolcall-body-section">
+              <div className="aide-toolcall-body-section-title">Result</div>
+              <ObsidianCodeBlock
+                content={
+                  response.data.type === 'text'
+                    ? response.data.text
+                    : response.data.type === 'image'
+                      ? 'Image'
+                      : 'Resource'
+                }
+              />
             </div>
           )}
           {response.status === ToolCallResponseStatus.Error && (
-            <div className="aide-toolcall-content-section">
-              <div>Error:</div>
+            <div className="aide-toolcall-body-section">
+              <div className="aide-toolcall-body-section-title">Error</div>
               <ObsidianCodeBlock content={response.error} />
             </div>
           )}
@@ -205,23 +199,23 @@ function ToolCallItem({
               <SplitButton
                 primaryText="Allow"
                 onPrimaryClick={() => {
-                  handleToolCall()
+                  void handleToolCall()
                   setIsOpen(false)
                 }}
                 menuOptions={[
                   {
                     label: 'Always allow this tool',
                     onClick: () => {
-                      handleToolCall()
-                      handleAllowAutoExecution()
+                      void handleToolCall()
+                      void handleAllowAutoExecution()
                       setIsOpen(false)
                     },
                   },
                   {
                     label: 'Allow for this chat',
                     onClick: () => {
-                      handleToolCall()
-                      handleAllowForConversation()
+                      void handleToolCall()
+                      void handleAllowForConversation()
                       setIsOpen(false)
                     },
                   },
@@ -229,7 +223,7 @@ function ToolCallItem({
               />
               <button
                 onClick={() => {
-                  handleReject()
+                  void handleReject()
                   setIsOpen(false)
                 }}
               >
@@ -239,7 +233,13 @@ function ToolCallItem({
           )}
           {response.status === ToolCallResponseStatus.Running && (
             <div className="aide-toolcall-footer-actions">
-              <button onClick={handleAbort}>Abort</button>
+              <button
+                onClick={() => {
+                  void handleAbort()
+                }}
+              >
+                Abort
+              </button>
             </div>
           )}
         </div>

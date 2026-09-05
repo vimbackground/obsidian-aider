@@ -47,10 +47,10 @@ export function EtcSection({ app }: EtcSectionProps) {
             en: 'English',
             auto: 'Auto (跟随系统)',
           }}
-          onChange={async (value) => {
-            await setSettings({
+          onChange={(value) => {
+            void setSettings({
               ...settings,
-              language: value as any,
+              language: value as 'en' | 'zh' | 'zh-CN' | 'auto',
             })
           }}
         />

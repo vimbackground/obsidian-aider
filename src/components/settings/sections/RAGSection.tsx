@@ -206,7 +206,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
                 ...folderDropdownOptions,
               }}
               onChange={(value: string) => {
-                if (value) handleAddFolder(value)
+                if (value) void handleAddFolder(value)
               }}
             />
           </ObsidianSetting>
@@ -326,7 +326,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
                 ...folderDropdownOptions,
               }}
               onChange={(value: string) => {
-                if (value) handleAddFolder(value)
+                if (value) void handleAddFolder(value)
               }}
             />
           </ObsidianSetting>
