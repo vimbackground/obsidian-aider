@@ -1,3 +1,45 @@
+# Release Notes: v1.0.0 - Official Milestone Release / 1.0.0 正式里程碑版本
+
+## 🌐 English
+- **Vault Chat & RAG Quick Setup Guided Workflow**:
+  - Interactive setup modal automatically guides users when initiating vault-wide knowledge base chat without active RAG or embedding model configuration, seamlessly continuing chat upon saving.
+  - Seamless localization resolution: modal strictly honors system language (`auto` / Obsidian locale) across titles, notice toasts, and settings controls.
+  - Aligned model selection logic: Rerank model defaults to unselected (`''`), prompting users to actively choose their model just like embedding models.
+- **Visual Design & Typography Refinement**:
+  - **Dual Action Button Consistency**: "Article Chat" and "Vault Chat" buttons now share identical refined accent borders and subtle backgrounds matching Obsidian theme palettes.
+  - **Balanced User Bubble Styling**: Removed saturated user bubble background, harmonizing typography, border, and line height with assistant responses.
+  - **Left-Aligned Reference Citations**: RAG document retrieval results ("Show Referenced Documents") are now left-aligned with assistant message streams and fully localized.
+  - **MCP Table Typography Alignment**: Normalized tool name font size (12.5px, 500 weight) to match description text for a clean, balanced layout.
+- **RAG & Knowledge Base Enhancements**:
+  - **Simplified Semantic Chunking Description**: Concise, plain-language description of semantic-first chunking strategy (heading hierarchy and natural paragraph preservation).
+  - **Exclusion of Vault System Folders**: Enforced default exclusion of non-note directories (`.obsidian`, `.aider`, `.aide`, `.trash`, `.git`, `.smart-env`) to safeguard indexing integrity.
+  - **Pure Single-Language Localization**: Eliminated mixed-language English parenthetical notations in Chinese settings panels.
+- **Default Models Modernization**:
+  - Initial chat model defaulted to SiliconFlow `Qwen/Qwen3.5-4B`.
+  - Default embedding model set to SiliconFlow `BAAI/bge-m3`.
+- **System Language Auto-Follow**: Default interface language now set to `auto`, detecting and aligning automatically with the Obsidian application language.
+
+## 🇨🇳 中文说明
+- **全知识库对话引导弹窗与 RAG 交互闭环**：
+  - 前台发起全知识库检索对话时，若 RAG 未启用或未选择嵌入模型，弹出就地配置引导窗口，保存后直接自动无缝提交对话，无需重复点击。
+  - 多语言解析跟随系统：彻底修复在 `auto`（跟随系统）语言下弹窗偶现英文的问题，界面、提示词与按钮纯正本地化。
+  - 重排序模型对齐设计：重排序模型默认设为空（用户主动选择），操作逻辑与嵌入模型完全一致，未配置时平稳降级执行初筛向量检索。
+- **界面视觉风格与排版深度优化**：
+  - **对话操作按钮模式统一**：“文章对话”与“全知识库对话”统一采用精致强调边框（`var(--interactive-accent)`）与微底色，视觉认知清晰协调。
+  - **用户消息气泡去除突兀底色**：用户消息转为无底色细边框卡片，版式、字重与行高与 AI 回复完全统一，沉浸感大幅增强。
+  - **检索引用文档消息左对齐**：“查看引用文档”入口消息改为与后续 AI 回复流左对齐，并支持多语言显示。
+  - **MCP 工具表格字号协调**：调整工具名称字体大小至 12.5px，与功能说明文字大小一致，视觉排版更为规整。
+- **RAG 知识库与文本切分精细化**：
+  - **分块策略通俗化**：精简提炼语义优先分块模式说明，通俗易懂地解释标题层级与自然段落分块机制。
+  - **系统目录底层默认强制排除**：知识库检索黑名单默认强制排除 `.obsidian`、`.aider`、`.trash`、`.git` 等典型非库内容系统目录，保障扫描精准高效。
+  - **后台设置纯净单语言化**：清除知识库设置中的中英文混杂说明与术语括号，中文环境下纯中文、英文环境下纯英文。
+- **现代化默认模型精简**：
+  - 默认对话模型仅预置 SiliconFlow 的 `Qwen/Qwen3.5-4B`；
+  - 默认嵌入模型仅预置 SiliconFlow 的 `BAAI/bge-m3`。
+- **默认语言跟随系统**：初次安装与初始化时，界面语言默认设为 `auto`（自动跟随 Obsidian 系统语言）。
+
+---
+
 # Release Notes: v0.13.3 - Obsidian Community Review Compliance & Security Hardening / 官方社区审核合规与安全加固
 
 ## 🌐 English

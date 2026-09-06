@@ -2,6 +2,7 @@ import { App } from 'obsidian'
 
 import { useSettings } from '../../../contexts/settings-context'
 import SmartComposerPlugin from '../../../main'
+import { getLanguage } from '../../../utils/i18n'
 import { ObsidianToggle } from '../../common/ObsidianToggle'
 
 type McpSectionProps = {
@@ -57,8 +58,7 @@ const BUILTIN_TOOLS_CONFIG: BuiltinToolInfo[] = [
 
 export function McpSection({ app: _app, plugin: _plugin }: McpSectionProps) {
   const { settings, setSettings } = useSettings()
-  const language = settings.language ?? 'en'
-  const isZh = language === 'zh'
+  const isZh = getLanguage(settings.language) === 'zh'
 
   const handleToggleBuiltinTool = async (key: string, enabled: boolean) => {
     const current = settings.mcp?.builtinTools ?? {}
@@ -108,7 +108,9 @@ export function McpSection({ app: _app, plugin: _plugin }: McpSectionProps) {
                 const isEnabled = builtinSettings[t.key] ?? true
                 return (
                   <tr key={t.key}>
-                    <td style={{ fontWeight: 600 }}>{isZh ? t.titleZh : t.titleEn}</td>
+                    <td style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--text-normal)' }}>
+                      {isZh ? t.titleZh : t.titleEn}
+                    </td>
                     <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>
                       {isZh ? t.descZh : t.descEn}
                     </td>

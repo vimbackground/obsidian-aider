@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.10.0-blue.svg" alt="version">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="version">
   <img src="https://img.shields.io/badge/platform-Obsidian-purple.svg" alt="platform">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="license">
   <img src="https://img.shields.io/badge/cross--platform-Desktop%20%26%20Mobile-brightgreen.svg" alt="cross-platform">
@@ -46,16 +46,23 @@
 - **Contextual Note Referencing**: Type `@` in the chat input to search and attach single notes or whole folders;
 - **Active Document Awareness**: Instantly perceives your currently opened document to provide summaries, extract highlights, or answer targeted questions.
 
-### 3. Token Efficiency & Intelligent Anti-Rate-Limit Protection
+### 3. Local Vault Deep Retrieval (RAG)
+- **Intelligent Semantic Chunking**: Automatically splits notes according to Markdown heading hierarchies and natural paragraphs, preserving cohesive context;
+- **Vault-Wide Knowledge Chat**: Single-click "Vault Chat" at the bottom of the chat panel. A frictionless on-screen guide helps you configure embedding and rerank models and immediately start querying;
+- **Deep Re-ranking (Rerank)**: Seamlessly integrates dedicated cross-encoder rerank models (such as BAAI Bge-Reranker) to re-score vector recall candidates for significantly higher precision;
+- **Transparent Source Citations**: Clear reference preview listing source notes and line ranges before AI answers, with direct click-to-open jumping;
+- **Robust Exclusion Rules**: Fully supports directory inclusion (whitelist) and exclusion (blacklist), with core system folders (`.obsidian`, `.git`, `.trash`, etc.) enforced by default.
+
+### 4. Token Efficiency & Intelligent Anti-Rate-Limit Protection
 - **🌱 Eco Mode**: Intelligently compacts conversation context, reducing token overhead by up to 75%;
 - **Smart Rate-Limit Backoff & Silent Retries**: Automatically calculates wait intervals upon encountering provider 429 limits, eliminating manual refreshes;
 - **Loop Guard**: Prevents multi-step reasoning tools from falling into repetitive loops, ensuring concise and well-structured conclusions.
 
-### 4. Ultra-Lightweight & Universal Compatibility
-- **Instantaneous Startup**: Bundle size is only **~0.43 MB**, placing zero performance overhead or lag on your vault indexing;
+### 5. Ultra-Lightweight & Universal Compatibility
+- **Instantaneous Startup**: Bundle size is only **~0.44 MB**, placing zero performance overhead or lag on your vault indexing;
 - **Full Cross-Platform Support**: Complies strictly with official Obsidian sandbox standards, running smoothly on Windows, macOS, Linux, iOS, and Android.
 
-### 5. Out-of-the-Box Zero-Config Native Tools
+### 6. Out-of-the-Box Zero-Config Native Tools
 - **Bing Web Search**: Direct, fast web search without extra proxies or API keys required;
 - **Webpage Content Fetcher**: Paste any URL to extract clean, readable Markdown in seconds;
 - **Global Real-Time Weather**: Query accurate current weather and 3-day forecasts for any city;
@@ -83,17 +90,29 @@ In addition to the 4 default-enabled providers, you can easily add and configure
 
 ## 🚀 Quick Start & Usage
 
-### 1. Installation
-1. Download **[`aider.zip`](https://github.com/vimbackground/obsidian-aider/releases/latest)** from the latest release;
-2. Extract the three files: `main.js`, `manifest.json`, and `styles.css`;
-3. Place them into your vault at `<Vault>/.obsidian/plugins/aider/`;
-4. In Obsidian, go to **Settings -> Community plugins**, reload, and enable **Aider**.
-*(Alternatively, copy the `output/obsidian-aider/` folder directly into your `.obsidian/plugins/` directory).*
+### 1. Method 1: Install from Obsidian Community Plugins (Recommended)
 
-### 2. How to Use
+Obsidian Aider has been reviewed and officially published on the **Obsidian Community Plugins** marketplace:
+
+1. Open Obsidian, navigate to **Settings -> Community plugins**;
+2. Ensure "Restricted mode" is turned off, then click **Browse**;
+3. Search for **`Aider`**;
+4. Locate the **Aider** plugin, click **Install**, and once completed, click **Enable**.
+
+### 2. Method 2: Manual Offline Installation
+
+If you cannot access the official marketplace directly, you can install manually:
+
+1. Download **[: `main.js`, `manifest.json`, and `styles.css`;](https://github.com/vimbackground/obsidian-aider/releases/latest)** from the latest release;
+2. Place them into your vault at `<Vault>/.obsidian/plugins/aider/`;
+4. In Obsidian, go to **Settings -> Community plugins**, reload the installed plugins list, and enable **Aider**.
+
+### 3. How to Use
 - **Open Chat**: Click the Aider icon on the left ribbon (or press `Ctrl/Cmd + P` and search `Open chat`);
+- **Article Chat**: Click the "Article Chat" button at the bottom of the input box (or press `Enter`) to discuss the currently open note;
+- **Vault Chat (RAG)**: Click the "Vault Chat" button at the bottom (or press `Shift + Enter`) to query your whole vault knowledge base with vector indexing. A quick setup modal will guide you on first use;
 - **Reference Notes**: Type `@` in the chat input to pick notes or folders to include in your conversation context;
-- **Configure Models**: Open **Settings -> Aider**, enter your API key for your preferred provider, and select your model at the top of the chat panel.
+- **Configure Models**: Open **Settings -> Aider**, enter your API key for your preferred provider, and select your chat, embedding, or rerank models.
 
 ---
 

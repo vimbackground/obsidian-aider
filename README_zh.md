@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.10.0-blue.svg" alt="version">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="version">
   <img src="https://img.shields.io/badge/platform-Obsidian-purple.svg" alt="platform">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="license">
   <img src="https://img.shields.io/badge/cross--platform-Desktop%20%26%20Mobile-brightgreen.svg" alt="cross-platform">
@@ -46,16 +46,23 @@
 - **精准引用笔记上下文**：在输入框键入 `@` 即可模糊搜索并嵌入单篇笔记或整个目录；
 - **当前文档主动感知**：自动感知当前激活编辑窗口的笔记，一键实现文档概括、观点提炼与交叉问答。
 
-### 3. 经济省流与智能防限流机制
+### 3. 本地向量知识库深度检索 (RAG)
+- **智能语义切分**：按 Markdown 标题层级与自然段落智能分块，保留笔记上下文完整连贯性；
+- **全知识库智能问答**：对话框下方一键点击「全知识库对话」，初次使用提供交互式就地向导，自动配置向量索引并无缝开启问答；
+- **二次重排序模型 (Rerank)**：支持接入 Bge-Reranker 等专用重排模型，对初筛候选切片进行深度交叉打分，大幅提升问答精准度；
+- **纯净引用溯源**：AI 回复前清晰展示引用文档来源及行号区间，点击即可直达对应笔记原始位置；
+- **安全黑白名单过滤**：支持指定包含（白名单）或排除（黑名单）目录，系统目录（`.obsidian`、`.git`、`.trash` 等）底层强制排除，杜绝无效扫描。
+
+### 4. 经济省流与智能防限流机制
 - **🌱 Eco 轻量模式**：智能优化对话上下文构建，显著降低 Token 消耗（相比常规请求节省高达 75%）；
 - **智能退避与静默重试**：遇到服务商限流（429）时自动计算最佳重试间隔，告别频繁手动刷新；
 - **智能死循环熔断保护**：防止复杂多轮任务陷入无限反复调用，确保始终输出清晰总结。
 
-### 4. 极致轻巧，全平台通用
-- **超轻体积秒开**：最终打包体积仅约 **0.43 MB**，启动即开即用，对笔记库无任何性能负担；
+### 5. 极致轻巧，全平台通用
+- **超轻体积秒开**：最终打包体积仅约 **0.44 MB**，启动即开即用，对笔记库无任何性能负担；
 - **全面跨平台**：完全遵循 Obsidian 官方沙箱规范，完美兼容 Windows、macOS、Linux 桌面端以及 iOS、Android 移动设备。
 
-### 5. 开箱即用免配置内置工具
+### 6. 开箱即用免配置内置工具
 - **国内必应联网搜索**：免 API Key、免代理直连，即时检索互联网最新事实与资讯；
 - **网页正文抓取提取**：粘贴任意网页 URL 链接，秒级转换为排版干净的 Markdown 文本；
 - **全球实时天气预报**：基于全球开放气象源，即时查询各地实时天气与未来预报；
@@ -76,24 +83,36 @@ Obsidian Aider 具备灵活强大的模型服务商支持。插件**默认预置
 - **国际主流云端大模型**：Anthropic (Claude)、Google Gemini、xAI (Grok)、Mistral AI、Perplexity、Groq、Azure OpenAI
 - **国内开放大模型平台**：ModelScope (魔搭社区)
 - **本地离线私有大模型**：Ollama、LM Studio（无需联网，完全本地运算，保障数据隐私）
-- **自定义与中转平台**：OpenAI Compatible（全面兼容任意符合 OpenAI API 规范的自建模型、第三方中转及 OneAPI / NewAPI 服务）
+- **自定义与中转平台**：OpenAI Compatible（全面兼容任意符合 OpenAI API规范的自建模型、第三方中转及 OneAPI / NewAPI 服务）
 - **网页订阅会话授权**：支持 Claude Plan、OpenAI Plan、Gemini Plan 原生会话凭证快速连接
 
 ---
 
 ## 🚀 快速上手与使用
 
-### 1. 安装与启用
-1. 前往 [最新 Releases 页面](https://github.com/vimbackground/obsidian-aider/releases/latest) 下载 **`aider.zip`**；
-2. 解压得到 `main.js`、`manifest.json`、`styles.css` 三个文件；
-3. 将它们放入笔记库目录 `<你的笔记库>/.obsidian/plugins/aider/`；
-4. 打开 Obsidian，进入 **设置 -> 第三方插件**，点击刷新并启用 **Aider**。
-*(若从源码仓库安装，直接将 `output/obsidian-aider/` 文件夹复制到 `.obsidian/plugins/` 亦可)*
+### 1. 方式一：通过 Obsidian 官方社区插件市场安装（推荐）
 
-### 2. 开始使用
-- **唤起对话**：点击 Obsidian 左侧边栏的图标（或通过命令面板 `Ctrl/Cmd + P` 搜索 `Open chat`）打开 Aider 侧边栏；
-- **关联笔记**：在输入框键入 `@` 选择要引用的笔记或文件夹，Aider 将自动提取上下文；
-- **配置服务商与模型**：进入 **设置 -> Aider**，在启用的服务商中填入 API Key，即可在对话框顶部随时切换心仪的模型。
+本项目已通过官方审核并在 **Obsidian 官方社区插件市场（Community Plugins）** 正式上架发布：
+
+1. 打开 Obsidian，进入 **设置 -> 第三方插件（Community plugins）**；
+2. 确保“受限模式”已关闭，点击 **浏览（Browse）**；
+3. 在搜索框中输入 **`Aider`**；
+4. 找到 **Aider** 插件，点击 **安装（Install）**，安装完成后点击 **启用（Enable）**。
+
+### 2. 方式二：手动离线安装
+
+若因网络原因无法直接访问官方市场，您也可以手动离线安装：
+
+1. 前往 [最新 Releases 页面](https://github.com/vimbackground/obsidian-aider/releases/latest) 下载 `main.js`、`manifest.json`、`styles.css` 三个文件；
+3. 将它们放入笔记库目录 `<你的笔记库>/.obsidian/plugins/aider/`；
+4. 打开 Obsidian，进入 **设置 -> 第三方插件**，点击已安装插件列表的刷新按钮并启用 **Aider**。
+
+### 3. 开始使用
+- **唤起对话**：点击 Obsidian 左侧边栏的图标（或通过快捷键 `Ctrl/Cmd + P` 搜索 `Open chat`）打开 Aider 侧边栏；
+- **文章对话**：点击输入框底部的「文章对话」（或按 `Enter`），针对当前打开的笔记进行提问；
+- **全知识库对话 (RAG)**：点击输入框底部的「全知识库对话」（或按 `Shift + Enter`），基于全库笔记向量索引进行深度问答。首次使用将弹出快速引导向导，助您一键配置嵌入模型并立即开始；
+- **精准引用笔记**：在输入框键入 `@` 即可选择指定单篇笔记或文件夹作为参考资料；
+- **配置服务商与模型**：进入 **设置 -> Aider**，填入服务商 API Key，即可在对话框底部随时切换对话模型、嵌入模型与重排模型。
 
 ---
 

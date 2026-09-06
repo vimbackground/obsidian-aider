@@ -1,23 +1,27 @@
-import { Trash2 } from 'lucide-react'
-import { App } from 'obsidian'
+import { Edit, Trash2 } from 'lucide-react'
+import { App, Notice } from 'obsidian'
+import { ObsidianToggle } from 'src/components/common/ObsidianToggle'
 
 import { useSettings } from '../../../../contexts/settings-context'
 import SmartComposerPlugin from '../../../../main'
 import { useI18n } from '../../../../utils/i18n'
 import { ConfirmModal } from '../../../modals/ConfirmModal'
 import { AddRerankModelModal } from '../../modals/AddRerankModelModal'
+import { EditRerankModelModal } from '../../modals/EditRerankModelModal'
 
 type RerankModelsSubSectionProps = {
   app: App
   plugin: SmartComposerPlugin
 }
 
+const isEnabled = (enable: boolean | undefined | null) => enable ?? true
+
 export function RerankModelsSubSection({
   app,
   plugin,
 }: RerankModelsSubSectionProps) {
   const { settings, setSettings } = useSettings()
-  const { language } = useI18n()
+  const { language, t } = useI18n()
 
   const rerankModels = settings.rerankModels || []
 
@@ -48,6 +52,29 @@ export function RerankModelsSubSection({
     }).open()
   }
 
+  const handleToggleEnableRerankModel = async (
+    modelId: string,
+    value: boolean,
+  ) => {
+    if (!value && settings.ragOptions.rerank?.enabled && modelId === settings.ragOptions.rerank?.modelId) {
+      new Notice('不能禁用当前正在作为 RAG 检索使用的重排模型')
+      await setSettings({
+        ...settings,
+        rerankModels: rerankModels.map((v) =>
+          v.id === modelId ? { ...v, enable: true } : v,
+        ),
+      })
+      return
+    }
+
+    await setSettings({
+      ...settings,
+      rerankModels: rerankModels.map((v) =>
+        v.id === modelId ? { ...v, enable: value } : v,
+      ),
+    })
+  }
+
   return (
     <div style={{ marginTop: '24px' }}>
       <div className="aide-settings-sub-header">
@@ -61,11 +88,19 @@ export function RerankModelsSubSection({
 
       <div className="aide-settings-table-container">
         <table className="aide-settings-table">
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col width={60} />
+            <col width={70} />
+          </colgroup>
           <thead>
             <tr>
               <th>{language === 'zh' ? '模型标识' : 'ID'}</th>
               <th>{language === 'zh' ? '服务商' : 'Provider'}</th>
               <th>{language === 'zh' ? '模型代号' : 'Model'}</th>
+              <th>{t('common.enable')}</th>
               <th>{language === 'zh' ? '操作' : 'Actions'}</th>
             </tr>
           </thead>
@@ -77,7 +112,24 @@ export function RerankModelsSubSection({
                   <td>{item.providerId}</td>
                   <td>{item.model}</td>
                   <td>
+                    <ObsidianToggle
+                      value={isEnabled(item.enable)}
+                      onChange={(value) => {
+                        void handleToggleEnableRerankModel(item.id, value)
+                      }}
+                    />
+                  </td>
+                  <td>
                     <div className="aide-settings-actions">
+                      <button
+                        onClick={() => {
+                          new EditRerankModelModal(app, plugin, item).open()
+                        }}
+                        className="clickable-icon"
+                        title={language === 'zh' ? '修改/更换模型设置' : 'Edit Model'}
+                      >
+                        <Edit />
+                      </button>
                       <button
                         onClick={() => {
                           void handleDeleteRerankModel(item.id)
@@ -93,7 +145,7 @@ export function RerankModelsSubSection({
               ))
             ) : (
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                   {language === 'zh' ? '暂未添加重排序模型，点击下方按钮添加' : 'No rerank models added yet.'}
                 </td>
               </tr>
@@ -101,7 +153,7 @@ export function RerankModelsSubSection({
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={4}>
+              <td colSpan={5}>
                 <button
                   onClick={() => {
                     new AddRerankModelModal(app, plugin).open()

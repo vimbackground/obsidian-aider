@@ -281,7 +281,7 @@ export class VectorManager {
     let filesToIndex = this.app.vault.getMarkdownFiles()
 
     // 1. 系统核心及非内容目录强制兜底排除
-    const SYSTEM_EXCLUDE_PATHS = [this.app.vault.configDir, '.aider', '.aide', '.trash', '.git', '.smart-env']
+    const SYSTEM_EXCLUDE_PATHS = [this.app.vault.configDir, '.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env']
     filesToIndex = filesToIndex.filter((file) => {
       const p = file.path
       return !SYSTEM_EXCLUDE_PATHS.some(

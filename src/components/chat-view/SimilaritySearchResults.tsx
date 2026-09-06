@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { useApp } from '../../contexts/app-context'
 import { SelectEmbedding } from '../../types/vector.types'
+import { useI18n } from '../../utils/i18n'
 import { openMarkdownFile } from '../../utils/obsidian'
 
 function SimiliartySearchItem({
@@ -41,6 +42,7 @@ export default function SimilaritySearchResults({
   })[]
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const { language } = useI18n()
 
   return (
     <div className="aide-similarity-search-results">
@@ -51,7 +53,11 @@ export default function SimilaritySearchResults({
         className="aide-similarity-search-results__trigger"
       >
         {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        <div>Show Referenced Documents ({similaritySearchResults.length})</div>
+        <div>
+          {language === 'zh'
+            ? `查看引用文档 (${similaritySearchResults.length})`
+            : `Show Referenced Documents (${similaritySearchResults.length})`}
+        </div>
       </div>
       {isOpen && (
         <div

@@ -8,12 +8,16 @@ export const getEmbeddingModelClient = ({
 }: {
   settings: SmartComposerSettings
   embeddingModelId: string
-}): EmbeddingModelClient => {
+}): EmbeddingModelClient | null => {
+  if (!embeddingModelId || embeddingModelId.trim() === '') {
+    return null
+  }
+
   const embeddingModel = settings.embeddingModels.find(
     (model) => model.id === embeddingModelId,
   )
   if (!embeddingModel) {
-    throw new Error(`Embedding model ${embeddingModelId} not found`)
+    return null
   }
 
   const providerClient = getProviderClient({

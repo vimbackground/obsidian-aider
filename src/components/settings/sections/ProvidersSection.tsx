@@ -71,7 +71,9 @@ export function ProvidersSection({ app, plugin }: ProvidersSectionProps) {
               settings,
               embeddingModelId: embeddingModel.id,
             })
-            await vectorManager.clearAllVectors(embeddingModelClient)
+            if (embeddingModelClient) {
+              await vectorManager.clearAllVectors(embeddingModelClient)
+            }
           }
         }
 

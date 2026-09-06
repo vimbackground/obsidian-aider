@@ -20,6 +20,7 @@ export const rerankModelSchema = z.object({
   providerId: z.string(),
   providerType: z.string(),
   model: z.string(),
+  enable: z.boolean().default(true).optional(),
 })
 export type RerankModel = z.infer<typeof rerankModelSchema>
 
@@ -29,6 +30,7 @@ export const DEFAULT_RERANK_MODELS: RerankModel[] = [
     providerId: 'siliconflow',
     providerType: 'siliconflow',
     model: 'BAAI/bge-reranker-v2-m3',
+    enable: true,
   },
 ]
 
@@ -42,24 +44,25 @@ export const DEFAULT_BUILTIN_TOOLS: Record<string, boolean> = {
 
 const rerankOptionsSchema = z.object({
   enabled: z.boolean().catch(false),
-  modelId: z.string().catch('BAAI/bge-reranker-v2-m3'),
+  modelId: z.string().catch(''),
   providerId: z.string().optional(),
   model: z.string().optional(),
   topN: z.number().catch(5),
 })
 
 const ragOptionsSchema = z.object({
+  enabled: z.boolean().catch(false),
   chunkSize: z.number().catch(1000),
   thresholdTokens: z.number().catch(8192),
   minSimilarity: z.number().catch(0.0),
   limit: z.number().catch(10),
   filterMode: z.enum(['blacklist', 'whitelist']).catch('blacklist'),
-  excludePatterns: z.array(z.string()).catch(['.aider', '.aide', '.trash', '.git']),
+  excludePatterns: z.array(z.string()).catch(['.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env']),
   includePatterns: z.array(z.string()).catch([]),
   backgroundIndexing: z.boolean().catch(false),
   rerank: rerankOptionsSchema.catch({
     enabled: false,
-    modelId: 'BAAI/bge-reranker-v2-m3',
+    modelId: '',
     providerId: 'siliconflow',
     model: 'BAAI/bge-reranker-v2-m3',
     topN: 5,
@@ -88,24 +91,25 @@ export const smartComposerSettingsSchema = z.object({
 
   chatModelId: z.string().catch(DEFAULT_CHAT_MODEL_ID),
   applyModelId: z.string().catch(DEFAULT_APPLY_MODEL_ID),
-  embeddingModelId: z.string().catch(DEFAULT_EMBEDDING_MODELS[0].id), // model for embedding
+  embeddingModelId: z.string().catch(''), // model for embedding
 
   // System Prompt
   systemPrompt: z.string().catch(DEFAULT_SYSTEM_PROMPT),
 
   // RAG Options
   ragOptions: ragOptionsSchema.catch({
+    enabled: false,
     chunkSize: 1000,
     thresholdTokens: 8192,
     minSimilarity: 0.0,
     limit: 10,
     filterMode: 'blacklist',
-    excludePatterns: ['.aider', '.aide', '.trash', '.git'],
+    excludePatterns: ['.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env'],
     includePatterns: [],
     backgroundIndexing: false,
     rerank: {
       enabled: false,
-      modelId: 'BAAI/bge-reranker-v2-m3',
+      modelId: '',
       providerId: 'siliconflow',
       model: 'BAAI/bge-reranker-v2-m3',
       topN: 5,
@@ -140,7 +144,7 @@ export const smartComposerSettingsSchema = z.object({
       runtimeProfile: 'eco',
     }),
 
-  language: z.enum(['en', 'zh', 'zh-CN', 'auto']).catch('en'),
+  language: z.enum(['en', 'zh', 'zh-CN', 'auto']).catch('auto'),
 })
 export type SmartComposerSettings = z.infer<typeof smartComposerSettingsSchema>
 

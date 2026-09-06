@@ -28,22 +28,30 @@ describe('parseSmartComposerSettings', () => {
 
       chatModelId: DEFAULT_CHAT_MODEL_ID,
       applyModelId: DEFAULT_APPLY_MODEL_ID,
-      embeddingModelId: DEFAULT_EMBEDDING_MODELS[0].id,
+      embeddingModelId: '',
 
       systemPrompt: DEFAULT_SYSTEM_PROMPT,
 
       ragOptions: {
+        enabled: false,
         chunkSize: 1000,
         thresholdTokens: 8192,
         minSimilarity: 0.0,
         limit: 10,
         filterMode: 'blacklist',
-        excludePatterns: ['.aider', '.aide', '.trash', '.git'],
+        excludePatterns: [
+          '.obsidian',
+          '.trash',
+          '.git',
+          '.smart-env',
+          '.smart-connections',
+          '.obsidian-aider',
+        ],
         includePatterns: [],
         backgroundIndexing: false,
         rerank: {
           enabled: false,
-          modelId: 'BAAI/bge-reranker-v2-m3',
+          modelId: '',
           providerId: 'siliconflow',
           model: 'BAAI/bge-reranker-v2-m3',
           topN: 5,
@@ -62,7 +70,7 @@ describe('parseSmartComposerSettings', () => {
         runtimeProfile: 'eco',
       },
 
-      language: 'en',
+      language: 'auto',
     })
   })
 })

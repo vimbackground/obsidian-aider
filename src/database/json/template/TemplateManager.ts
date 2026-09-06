@@ -159,9 +159,8 @@ export class TemplateManager extends AbstractJsonRepository<
     )
 
     for (const preset of OBSIDIAN_PRESET_TEMPLATES) {
-      const name = `${preset.nameZh} (${preset.nameEn})`
-      const contentText = `[中文提示 / Chinese]\n${preset.contentZh}\n\n---\n[English Prompt]\n${preset.contentEn}`
-      const editorState = plainTextToEditorState(contentText)
+      const name = preset.name
+      const editorState = plainTextToEditorState(preset.content)
       const nodes = editorState.root?.children || []
       try {
         await this.createTemplate({

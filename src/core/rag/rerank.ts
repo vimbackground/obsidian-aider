@@ -22,7 +22,13 @@ export async function rerankDocuments({
   settings: SmartComposerSettings
 }): Promise<RerankResult[]> {
   const rerankConfig = settings.ragOptions.rerank
-  if (!rerankConfig || !rerankConfig.enabled || documents.length === 0) {
+  if (
+    !rerankConfig ||
+    !rerankConfig.enabled ||
+    !rerankConfig.modelId ||
+    rerankConfig.modelId.trim() === '' ||
+    documents.length === 0
+  ) {
     return documents.map((_, index) => ({ index, relevanceScore: 1 }))
   }
 

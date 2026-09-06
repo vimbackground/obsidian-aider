@@ -1,5 +1,6 @@
-import { Trash2 } from 'lucide-react'
-import { App } from 'obsidian'
+import { Edit, Trash2 } from 'lucide-react'
+import { App, Notice } from 'obsidian'
+import { ObsidianToggle } from 'src/components/common/ObsidianToggle'
 
 import { useSettings } from '../../../../contexts/settings-context'
 import { getEmbeddingModelClient } from '../../../../core/rag/embedding'
@@ -7,11 +8,14 @@ import SmartComposerPlugin from '../../../../main'
 import { useI18n } from '../../../../utils/i18n'
 import { ConfirmModal } from '../../../modals/ConfirmModal'
 import { AddEmbeddingModelModal } from '../../modals/AddEmbeddingModelModal'
+import { EditEmbeddingModelModal } from '../../modals/EditEmbeddingModelModal'
 
 type EmbeddingModelsSubSectionProps = {
   app: App
   plugin: SmartComposerPlugin
 }
+
+const isEnabled = (enable: boolean | undefined | null) => enable ?? true
 
 export function EmbeddingModelsSubSection({
   app,
@@ -40,7 +44,9 @@ export function EmbeddingModelsSubSection({
             settings,
             embeddingModelId: modelId,
           })
-          await vectorManager.clearAllVectors(embeddingModelClient)
+          if (embeddingModelClient) {
+            await vectorManager.clearAllVectors(embeddingModelClient)
+          }
         }
 
         const remainingModels = settings.embeddingModels.filter((v) => v.id !== modelId)
@@ -56,6 +62,29 @@ export function EmbeddingModelsSubSection({
     }).open()
   }
 
+  const handleToggleEnableEmbeddingModel = async (
+    modelId: string,
+    value: boolean,
+  ) => {
+    if (!value && modelId === settings.embeddingModelId) {
+      new Notice('不能禁用当前正在作为活动嵌入模型使用的项')
+      await setSettings({
+        ...settings,
+        embeddingModels: settings.embeddingModels.map((v) =>
+          v.id === modelId ? { ...v, enable: true } : v,
+        ),
+      })
+      return
+    }
+
+    await setSettings({
+      ...settings,
+      embeddingModels: settings.embeddingModels.map((v) =>
+        v.id === modelId ? { ...v, enable: value } : v,
+      ),
+    })
+  }
+
   return (
     <div>
       <div className="aide-settings-sub-header">{t('settings.embeddingModels')}</div>
@@ -65,12 +94,21 @@ export function EmbeddingModelsSubSection({
 
       <div className="aide-settings-table-container">
         <table className="aide-settings-table">
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col width={80} />
+            <col width={60} />
+            <col width={70} />
+          </colgroup>
           <thead>
             <tr>
               <th>{t('common.id')}</th>
               <th>{t('common.providerId')}</th>
               <th>{t('common.model')}</th>
               <th>{t('settings.dimension')}</th>
+              <th>{t('common.enable')}</th>
               <th>{t('common.actions')}</th>
             </tr>
           </thead>
@@ -82,7 +120,24 @@ export function EmbeddingModelsSubSection({
                 <td>{embeddingModel.model}</td>
                 <td>{embeddingModel.dimension}</td>
                 <td>
+                  <ObsidianToggle
+                    value={isEnabled(embeddingModel.enable)}
+                    onChange={(value) => {
+                      void handleToggleEnableEmbeddingModel(embeddingModel.id, value)
+                    }}
+                  />
+                </td>
+                <td>
                   <div className="aide-settings-actions">
+                    <button
+                      onClick={() => {
+                        new EditEmbeddingModelModal(app, plugin, embeddingModel).open()
+                      }}
+                      className="clickable-icon"
+                      title="修改/更换嵌入模型"
+                    >
+                      <Edit />
+                    </button>
                     <button
                       onClick={() => {
                         void handleDeleteEmbeddingModel(embeddingModel.id)
@@ -99,7 +154,7 @@ export function EmbeddingModelsSubSection({
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={5}>
+              <td colSpan={6}>
                 <button
                   onClick={() => {
                     new AddEmbeddingModelModal(app, plugin).open()

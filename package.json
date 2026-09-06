@@ -1,6 +1,6 @@
 {
   "name": "obsidian-aider",
-  "version": "0.13.3",
+  "version": "1.0.0",
   "description": "轻量级 Obsidian AI 助手，专注文档查阅、编写与创作，支持多模型服务商与向量知识检索。",
   "main": "main.js",
   "scripts": {

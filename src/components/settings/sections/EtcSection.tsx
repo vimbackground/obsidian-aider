@@ -41,11 +41,11 @@ export function EtcSection({ app }: EtcSectionProps) {
         desc={t('settings.languageDesc')}
       >
         <ObsidianDropdown
-          value={settings.language || 'en'}
+          value={settings.language || 'auto'}
           options={{
+            auto: 'Auto (跟随系统 / System)',
             zh: '中文 (简体)',
             en: 'English',
-            auto: 'Auto (跟随系统)',
           }}
           onChange={(value) => {
             void setSettings({

@@ -28,7 +28,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
   const [selectedFolderToAdd, setSelectedFolderToAdd] = useState('')
 
   // 获取 Vault 中现存的所有文件夹列表（排除系统隐藏文件夹）
-  const systemFolders = [app.vault.configDir, '.aider', '.aide', '.trash', '.git', '.smart-env']
+  const systemFolders = [app.vault.configDir, '.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env']
   const allVaultFolders = app.vault
     .getAllLoadedFiles()
     .filter((f): f is TFolder => f instanceof TFolder && f.path !== '/')
@@ -109,59 +109,86 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
     }
   }
 
+  const isRagEnabled = settings.ragOptions.enabled ?? false
+
   return (
     <div className="aide-settings-section">
       <div className="aide-settings-header">{t('settings.rag')}</div>
 
       <ObsidianSetting
-        name={t('settings.backgroundIndexing')}
-        desc={t('settings.backgroundIndexingDesc')}
+        name={t('settings.enableRag')}
+        desc={t('settings.enableRagDesc')}
       >
         <ObsidianToggle
-          value={settings.ragOptions.backgroundIndexing ?? false}
+          value={isRagEnabled}
           onChange={async (value) => {
             await setSettings({
               ...settings,
               ragOptions: {
                 ...settings.ragOptions,
-                backgroundIndexing: value,
+                enabled: value,
               },
             })
           }}
         />
       </ObsidianSetting>
 
-      <ObsidianSetting
-        name={t('settings.embeddingModel')}
-        desc={t('settings.embeddingModelDesc')}
-      >
-        <ObsidianDropdown
-          value={settings.embeddingModelId}
-          options={Object.fromEntries(
-            settings.embeddingModels.map((embeddingModel) => [
-              embeddingModel.id,
-              `${embeddingModel.id}${RECOMMENDED_MODELS_FOR_EMBEDDING.includes(embeddingModel.id) ? ' (Recommended)' : ''}`,
-            ]),
-          )}
-          onChange={async (value) => {
-            await setSettings({
-              ...settings,
-              embeddingModelId: value,
-            })
-          }}
-        />
-      </ObsidianSetting>
+      {isRagEnabled && (
+        <>
+          <ObsidianSetting
+            name={t('settings.backgroundIndexing')}
+            desc={t('settings.backgroundIndexingDesc')}
+          >
+            <ObsidianToggle
+              value={settings.ragOptions.backgroundIndexing ?? false}
+              onChange={async (value) => {
+                await setSettings({
+                  ...settings,
+                  ragOptions: {
+                    ...settings.ragOptions,
+                    backgroundIndexing: value,
+                  },
+                })
+              }}
+            />
+          </ObsidianSetting>
 
-      {/* 目录过滤模式（黑名单 / 白名单 严格互斥） */}
-      <ObsidianSetting
-        name="目录过滤模式 (Filter Mode)"
-        desc="选择过滤知识库目录的策略。黑名单与白名单模式互斥生效，杜绝扫描与索引冲突。"
-      >
+          <ObsidianSetting
+            name={t('settings.embeddingModel')}
+            desc={t('settings.embeddingModelDesc')}
+          >
+            <ObsidianDropdown
+              value={settings.embeddingModelId}
+              options={{
+                '': t('common.notSelected'),
+                ...Object.fromEntries(
+                  settings.embeddingModels
+                    .filter(({ enable }) => enable ?? true)
+                    .map((embeddingModel) => [
+                      embeddingModel.id,
+                      embeddingModel.id,
+                    ]),
+                ),
+              }}
+              onChange={async (value) => {
+                await setSettings({
+                  ...settings,
+                  embeddingModelId: value,
+                })
+              }}
+            />
+          </ObsidianSetting>
+
+          {/* 目录过滤模式（黑名单 / 白名单 严格互斥） */}
+          <ObsidianSetting
+            name={t('settings.filterMode')}
+            desc={t('settings.filterModeDesc')}
+          >
         <ObsidianDropdown
           value={currentFilterMode}
           options={{
-            blacklist: '黑名单模式 (全库扫描，仅排除指定目录 - 推荐)',
-            whitelist: '白名单模式 (仅扫描指定目录，其余全部排除)',
+            blacklist: t('settings.filterModeBlacklist'),
+            whitelist: t('settings.filterModeWhitelist'),
           }}
           onChange={async (value: string) => {
             await setSettings({
@@ -178,11 +205,11 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       {currentFilterMode === 'blacklist' ? (
         <>
           <ObsidianSetting
-            name="排除目录设置 (黑名单)"
-            desc="指定不参与向量扫描的目录或文件。系统核心目录（配置目录、.aider、.trash、.git 等）已由底层默认强制排除。"
+            name={t('settings.excludeSettings')}
+            desc={t('settings.excludeSettingsDesc')}
           >
             <ObsidianButton
-              text="测试匹配排除文件"
+              text={t('settings.testExcludedFiles')}
               onClick={async () => {
                 const patterns = settings.ragOptions.excludePatterns
                 const excludedFiles = await findFilesMatchingPatterns(
@@ -196,13 +223,13 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
 
           {/* 鼠标点击下拉快速添加文件夹 */}
           <ObsidianSetting
-            name="鼠标快速添加排除文件夹"
-            desc="从当前库中现有的文件夹列表直接点选加入黑名单："
+            name={t('settings.quickAddExcludeFolder')}
+            desc={t('settings.quickAddExcludeFolderDesc')}
           >
             <ObsidianDropdown
               value={selectedFolderToAdd}
               options={{
-                '': '-- 点击鼠标选择要排除的文件夹 --',
+                '': t('settings.selectFolderToExclude'),
                 ...folderDropdownOptions,
               }}
               onChange={(value: string) => {
@@ -250,7 +277,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
                             color: 'var(--text-muted)',
                           }}
                         >
-                          (系统默认)
+                          {t('settings.systemDefaultBadge')}
                         </span>
                       ) : (
                         <span
@@ -261,7 +288,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
                             fontWeight: 'bold',
                             marginLeft: '2px',
                           }}
-                          title="点击删除此条目"
+                          title={t('settings.removeRuleTooltip')}
                         >
                           ×
                         </span>
@@ -273,8 +300,8 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
             )}
 
           <ObsidianSetting
-            name="手动编辑排除规则文本"
-            desc="高级选项：支持输入 glob 规则（每行一条，例如 templates/** 或 assets）。"
+            name={t('settings.manualEditExcludeRules')}
+            desc={t('settings.manualEditExcludeRulesDesc')}
             className="aide-settings-textarea"
           >
             <ObsidianTextArea
@@ -298,11 +325,11 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       ) : (
         <>
           <ObsidianSetting
-            name="指定包含目录 (白名单)"
-            desc="仅此列表中的文件夹会被扫描和向量化。留空则默认全库包含（系统核心目录除外）。"
+            name={t('settings.includeSettings')}
+            desc={t('settings.includeSettingsDesc')}
           >
             <ObsidianButton
-              text="测试匹配包含文件"
+              text={t('settings.testIncludedFiles')}
               onClick={async () => {
                 const patterns = settings.ragOptions.includePatterns
                 const includedFiles = await findFilesMatchingPatterns(
@@ -316,13 +343,13 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
 
           {/* 鼠标点击下拉快速添加文件夹 */}
           <ObsidianSetting
-            name="鼠标快速添加白名单文件夹"
-            desc="从当前库中现有的文件夹列表直接点选加入白名单："
+            name={t('settings.quickAddIncludeFolder')}
+            desc={t('settings.quickAddIncludeFolderDesc')}
           >
             <ObsidianDropdown
               value={selectedFolderToAdd}
               options={{
-                '': '-- 点击鼠标选择要包含的文件夹 --',
+                '': t('settings.selectFolderToInclude'),
                 ...folderDropdownOptions,
               }}
               onChange={(value: string) => {
@@ -369,7 +396,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
                         fontWeight: 'bold',
                         marginLeft: '2px',
                       }}
-                      title="点击删除此条目"
+                      title={t('settings.removeRuleTooltip')}
                     >
                       ×
                     </span>
@@ -379,8 +406,8 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
             )}
 
           <ObsidianSetting
-            name="手动编辑白名单规则文本"
-            desc="高级选项：支持输入 glob 规则（每行一条，例如 notes/** 或 articles）。"
+            name={t('settings.manualEditIncludeRules')}
+            desc={t('settings.manualEditIncludeRulesDesc')}
             className="aide-settings-textarea"
           >
             <ObsidianTextArea
@@ -405,7 +432,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
 
       {/* 文本分块策略呈现卡片 */}
       <div className="aide-settings-sub-header" style={{ marginTop: '20px' }}>
-        文本分块策略 (Text Chunking)
+        {t('settings.chunkingStrategy')}
       </div>
 
       <div
@@ -425,7 +452,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
             fontSize: '13px',
           }}
         >
-          🟢 语义优先模式 (自然段落与标题自适应切分)
+          {t('settings.semanticModeBadge')}
         </div>
         <div
           style={{
@@ -434,13 +461,13 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
             lineHeight: '1.5',
           }}
         >
-          Aide 采用智能自然语义切分技术：优先根据 Markdown 标题层级和换行段落进行自适应切分，并在切片时自动剥离开头的 YAML Frontmatter 元数据，确保上下文完整连贯、语义不割裂；当单个段落内容超出设定的最大容量限制时自动平滑递归细分。
+          {t('settings.semanticModeDesc')}
         </div>
       </div>
 
       <ObsidianSetting
-        name="单块最大容量限制 (Max Chunk Size)"
-        desc="单个语义文本分块允许的最大字符数（默认 1000 字符）。修改后建议全量重建索引以重新切分。"
+        name={t('settings.chunkSize')}
+        desc={t('settings.chunkSizeDesc')}
       >
         <ObsidianTextInput
           value={String(settings.ragOptions.chunkSize)}
@@ -461,8 +488,8 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       </ObsidianSetting>
 
       <ObsidianSetting
-        name="上下文 Token 阈值 (Threshold tokens)"
-        desc="当对话中引入的笔记总 Token 估算超过此数值时，自动从全文包含转为知识库相似度检索。"
+        name={t('settings.thresholdTokens')}
+        desc={t('settings.thresholdTokensDesc')}
       >
         <ObsidianTextInput
           value={String(settings.ragOptions.thresholdTokens)}
@@ -483,8 +510,8 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       </ObsidianSetting>
 
       <ObsidianSetting
-        name="最低相似度 (Minimum similarity)"
-        desc="向量检索结果的最低余弦相似度（0.0 ~ 1.0）。数值越高结果越相关，但过高可能导致匹配过少。"
+        name={t('settings.minSimilarity')}
+        desc={t('settings.minSimilarityDesc')}
       >
         <ObsidianTextInput
           value={String(settings.ragOptions.minSimilarity)}
@@ -507,8 +534,8 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       </ObsidianSetting>
 
       <ObsidianSetting
-        name="最大检索条数 (Limit)"
-        desc="知识库检索时最多召回并提供给 AI 的笔记分块数量。"
+        name={t('settings.limit')}
+        desc={t('settings.limitDesc')}
       >
         <ObsidianTextInput
           value={String(settings.ragOptions.limit)}
@@ -528,11 +555,11 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
         />
       </ObsidianSetting>
 
-      <div className="aide-settings-sub-header">重排序模型深度检索</div>
+      <div className="aide-settings-sub-header">{t('settings.rerankDeepRetrieval')}</div>
 
       <ObsidianSetting
-        name="启用重排深度排序"
-        desc="在初筛向量检索后，调用重排序模型对候选文本块进行深度语义重新打分与排序，大幅提升检索精准度。"
+        name={t('settings.enableRerank')}
+        desc={t('settings.enableRerankDesc')}
       >
         <ObsidianToggle
           value={settings.ragOptions.rerank?.enabled ?? false}
@@ -559,22 +586,23 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
       {settings.ragOptions.rerank?.enabled && (
         <>
           <ObsidianSetting
-            name="选择当前采用的重排序模型"
-            desc="从【模型管理】已添加的重排序模型列表中选择一个用于当前检索重排。"
+            name={t('settings.selectRerankModel')}
+            desc={t('settings.selectRerankModelDesc')}
           >
             {settings.rerankModels && settings.rerankModels.length > 0 ? (
               <ObsidianDropdown
-                value={
-                  settings.ragOptions.rerank?.modelId ??
-                  settings.rerankModels[0]?.id ??
-                  ''
-                }
-                options={Object.fromEntries(
-                  settings.rerankModels.map((m) => [
-                    m.id,
-                    `${m.id} (${m.providerId})`,
-                  ]),
-                )}
+                value={settings.ragOptions.rerank?.modelId ?? ''}
+                options={{
+                  '': t('common.notSelected'),
+                  ...Object.fromEntries(
+                    settings.rerankModels
+                      .filter(({ enable }) => enable ?? true)
+                      .map((m) => [
+                        m.id,
+                        `${m.id} (${m.providerId})`,
+                      ]),
+                  ),
+                }}
                 onChange={async (value) => {
                   const selected = settings.rerankModels.find(
                     (m) => m.id === value,
@@ -595,14 +623,14 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
               />
             ) : (
               <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-                尚未添加任何重排序模型，请先前往左侧【模型管理】添加
+                {t('settings.noRerankModels')}
               </div>
             )}
           </ObsidianSetting>
 
           <ObsidianSetting
-            name="重排最终输出条数 (Top N)"
-            desc="经过重排序打分后，最终截取保留的相关度最高的内容条数。"
+            name={t('settings.rerankTopN')}
+            desc={t('settings.rerankTopNDesc')}
           >
             <ObsidianTextInput
               value={String(settings.ragOptions.rerank?.topN ?? 5)}
@@ -627,19 +655,21 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
         </>
       )}
 
-      <div className="aide-settings-sub-header">向量数据管理</div>
+      <div className="aide-settings-sub-header">{t('settings.vectorDataManagement')}</div>
 
       <ObsidianSetting
-        name="向量索引数据"
-        desc="查看当前库中各嵌入模型的向量记录总数与占用空间，或清空并重新构建索引。"
+        name={t('settings.vectorDataStatus')}
+        desc={t('settings.vectorDataStatusDesc')}
       >
         <ObsidianButton
-          text="查看与管理向量索引"
+          text={t('settings.viewManageVectors')}
           onClick={() => {
             new EmbeddingDbManageModal(app, plugin).open()
           }}
         />
       </ObsidianSetting>
+        </>
+      )}
     </div>
   )
 }

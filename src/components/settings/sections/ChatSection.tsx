@@ -18,7 +18,7 @@ export function ChatSection() {
         .filter(({ enable }) => enable ?? true)
         .map((chatModel) => [
           chatModel.id,
-          `${chatModel.id}${RECOMMENDED_MODELS_FOR_CHAT.includes(chatModel.id) ? ' (Recommended)' : ''}`,
+          chatModel.id,
         ]),
     ),
   }

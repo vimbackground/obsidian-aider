@@ -1,7 +1,9 @@
 import { CircleStop, FileText, History, Sparkles } from 'lucide-react'
 import { App, Notice } from 'obsidian'
 
+import { SmartComposerSettings } from '../../settings/schema/setting.types'
 import { useI18n } from '../../utils/i18n'
+import { RagQuickSetupModal } from '../settings/modals/RagQuickSetupModal'
 import {
   forwardRef,
   useCallback,
@@ -81,7 +83,7 @@ export type ChatProps = {
 const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
   const app = useApp()
   const { settings, setSettings } = useSettings()
-  const { language } = useI18n()
+  const { t, language } = useI18n()
   const { getRAGEngine } = useRAG()
   const { getMcpManager } = useMcp()
 
@@ -319,10 +321,37 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
     async ({
       inputChatMessages,
       useVaultSearch,
+      currentSettings,
     }: {
       inputChatMessages: ChatMessage[]
       useVaultSearch?: boolean
+      currentSettings?: SmartComposerSettings
     }) => {
+      const activeSettings = currentSettings ?? settings
+      // 如果触发了全知识库对话，验证 RAG 开关与嵌入模型配置
+      if (useVaultSearch) {
+        if (
+          !activeSettings.ragOptions?.enabled ||
+          !activeSettings.embeddingModelId ||
+          activeSettings.embeddingModelId.trim() === ''
+        ) {
+          new RagQuickSetupModal(app, {
+            settings: activeSettings,
+            onSave: async (newSettings) => {
+              await setSettings(newSettings)
+            },
+            onSuccess: (savedSettings) => {
+              void handleUserMessageSubmit({
+                inputChatMessages,
+                useVaultSearch: true,
+                currentSettings: savedSettings,
+              })
+            },
+          }).open()
+          return
+        }
+      }
+
       abortActiveStreams()
       setQueryProgress({
         type: 'idle',
@@ -382,6 +411,8 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
       promptGenerator,
       abortActiveStreams,
       forceScrollToBottom,
+      settings,
+      t,
     ],
   )
 

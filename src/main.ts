@@ -6,7 +6,9 @@ import {
   CHAT_VIEW_TYPE,
   DEFAULT_CHAT_MODELS,
   DEFAULT_CHAT_MODEL_ID,
+  DEFAULT_EMBEDDING_MODELS,
   DEFAULT_PROVIDERS,
+  DEFAULT_SYSTEM_PROMPT,
 } from './constants'
 import { McpManager } from './core/mcp/mcpManager'
 import { RAGEngine } from './core/rag/ragEngine'
@@ -217,7 +219,12 @@ export default class SmartComposerPlugin extends Plugin {
       this.settings.mcp.servers = deduplicatedServers
     }
 
-    // 1. 服务商精简：仅保留 openai, deepseek, openrouter, siliconflow，过滤未填写 Key 的其余服务商
+    // 1. 确保默认系统提示词非空
+    if (!this.settings.systemPrompt || !this.settings.systemPrompt.trim()) {
+      this.settings.systemPrompt = DEFAULT_SYSTEM_PROMPT
+    }
+
+    // 2. 服务商精简：仅保留 openai, deepseek, openrouter, siliconflow，过滤未填写 Key 的其余服务商
     const allowedProviderTypes = new Set(['openai', 'deepseek', 'openrouter', 'siliconflow'])
     const existingProviders = this.settings.providers || []
     const filteredProviders = existingProviders.filter((p) => {
@@ -231,11 +238,69 @@ export default class SmartComposerPlugin extends Plugin {
     }
     this.settings.providers = filteredProviders
 
-    // 2. 默认启用的对话模型仅保留并确保包含：Qwen/Qwen3.5-4B，清理废弃的 DeepSeek-V4-Flash
+    // 3. 嵌入模型清理：彻底过滤遗留内置嵌入模型，默认仅保留 SiliconFlow 的 BAAI/bge-m3
+    const legacyEmbeddingModelIds = new Set([
+      'openai/text-embedding-3-small',
+      'openai/text-embedding-3-large',
+      'gemini/text-embedding-004',
+      'ollama/nomic-embed-text',
+      'ollama/mxbai-embed-large',
+      'ollama/bge-m3',
+      'bge-m3',
+    ])
+    let currentEmbeddingModels = (this.settings.embeddingModels || []).filter(
+      (m) => !legacyEmbeddingModelIds.has(m.id),
+    )
+    for (const defaultModel of DEFAULT_EMBEDDING_MODELS) {
+      const existing = currentEmbeddingModels.find(
+        (m) => m.id === defaultModel.id || m.model === defaultModel.model,
+      )
+      if (!existing) {
+        currentEmbeddingModels.push({ ...defaultModel })
+      } else {
+        existing.enable = true
+      }
+    }
+    this.settings.embeddingModels = currentEmbeddingModels
+
+    if (
+      !this.settings.embeddingModelId ||
+      legacyEmbeddingModelIds.has(this.settings.embeddingModelId) ||
+      !this.settings.embeddingModels.some((m) => m.id === this.settings.embeddingModelId)
+    ) {
+      this.settings.embeddingModelId = ''
+    }
+
+    // 4. 对话模型清理：仅保留 Qwen/Qwen3.5-4B 以及用户已配置 API Key 的模型，其它默认模型不要添加
+    const hasAnthropicKey = filteredProviders.some(
+      (p) => p.type === 'anthropic' && Boolean(p.apiKey && p.apiKey.trim() !== ''),
+    )
+    const configuredProviderIds = new Set(
+      filteredProviders
+        .filter((p) => Boolean(p.apiKey && p.apiKey.trim() !== ''))
+        .map((p) => p.id),
+    )
+    const configuredProviderTypes = new Set(
+      filteredProviders
+        .filter((p) => Boolean(p.apiKey && p.apiKey.trim() !== ''))
+        .map((p) => p.type),
+    )
     let currentChatModels = (this.settings.chatModels || []).filter((m) => {
+      if (m.id === DEFAULT_CHAT_MODEL_ID) return true
+      const providerTypeStr = m.providerType as string
+      if (
+        providerTypeStr === 'anthropic-plan' ||
+        providerTypeStr === 'openai-plan' ||
+        providerTypeStr === 'gemini-plan'
+      ) {
+        return false
+      }
       if (m.providerType === 'groq' && m.id === 'qwen/qwen3.8-27b') return false
       if (m.id === 'deepseek-ai/DeepSeek-V4-Flash') return false
-      return true
+      return (
+        configuredProviderIds.has(m.providerId) ||
+        configuredProviderTypes.has(m.providerType)
+      )
     })
     for (const defaultModel of DEFAULT_CHAT_MODELS) {
       const existing = currentChatModels.find(
@@ -249,8 +314,13 @@ export default class SmartComposerPlugin extends Plugin {
     }
     this.settings.chatModels = currentChatModels
 
-    // 确保默认对话模型设置
-    if (!this.settings.chatModelId || this.settings.chatModelId === 'deepseek-ai/DeepSeek-V4-Flash') {
+    // 确保默认对话模型设置：若为 Claude 或不存在则重置为默认 Qwen/Qwen3.5-4B
+    if (
+      !this.settings.chatModelId ||
+      (!hasAnthropicKey && this.settings.chatModelId.toLowerCase().includes('claude')) ||
+      this.settings.chatModelId === 'deepseek-ai/DeepSeek-V4-Flash' ||
+      !currentChatModels.some((m) => m.id === this.settings.chatModelId)
+    ) {
       this.settings.chatModelId = DEFAULT_CHAT_MODEL_ID
     }
 

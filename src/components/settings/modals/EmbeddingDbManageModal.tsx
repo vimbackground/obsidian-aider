@@ -111,6 +111,10 @@ function EmbeddingDbManageModalComponent() {
         settings,
         embeddingModelId: modelId,
       })
+      if (!embeddingModel) {
+        new Notice(`Embedding model client not found for ${modelId}`)
+        return
+      }
 
       await (
         await getVectorManager()
@@ -155,6 +159,10 @@ function EmbeddingDbManageModalComponent() {
         settings,
         embeddingModelId: modelId,
       })
+      if (!embeddingModel) {
+        new Notice(`Embedding model client not found for ${modelId}`)
+        return
+      }
       await (await getVectorManager()).clearAllVectors(embeddingModel)
     } catch (error) {
       console.error(error)

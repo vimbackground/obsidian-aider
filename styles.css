@@ -196,8 +196,9 @@
   .aide-user-message-bubble {
     display: inline-block;
     max-width: 85%;
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent, var(--text-normal));
+    background-color: transparent;
+    color: var(--text-normal);
+    border: 1px solid var(--background-modifier-border);
     border-radius: var(--radius-m, 8px) var(--radius-m, 8px) 2px var(--radius-m, 8px);
     padding: var(--size-4-2) var(--size-4-3);
     font-size: var(--font-ui-medium, 13.5px);
@@ -207,11 +208,11 @@
     white-space: pre-wrap;
     user-select: text;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
-  .aide-user-message-bubble ::selection {
-    background-color: rgba(255, 255, 255, 0.3);
+  .aide-user-message-bubble:hover {
+    border-color: var(--background-modifier-border-hover, var(--interactive-accent));
   }
 
   .aide-user-message-edit-box {
@@ -510,25 +511,79 @@
 }
 
 .aide-chat-user-input-controls .aide-chat-user-input-submit-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--size-4-1);
-  font-size: 13px;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+  font-family: inherit;
   color: var(--text-muted);
-  padding: 2px var(--size-2-2);
+  background-color: var(--background-modifier-form-field);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 8px;
   border-radius: var(--radius-s);
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+  white-space: nowrap;
 
   &:hover {
     color: var(--text-normal);
     background-color: var(--background-modifier-hover);
+    border-color: var(--background-modifier-border-hover, var(--interactive-accent));
+  }
+
+  &:active {
+    transform: translateY(1px);
+    background-color: var(--background-modifier-active-hover);
   }
 
   .aide-chat-user-input-submit-button-icons {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
+    gap: 1.5px;
+    opacity: 0.75;
+  }
+
+  .aide-chat-btn-text {
+    display: inline-block;
+  }
+
+  &.aide-chat-btn-article {
+    color: var(--text-normal);
+    border-color: var(--interactive-accent);
+    background-color: rgba(var(--interactive-accent-rgb, 120, 100, 255), 0.08);
+
+    &:hover {
+      background-color: rgba(var(--interactive-accent-rgb, 120, 100, 255), 0.15);
+      border-color: var(--interactive-accent);
+    }
+  }
+
+  &.is-rag-active {
+    color: var(--text-normal);
+    border-color: var(--interactive-accent);
+    background-color: rgba(var(--interactive-accent-rgb, 120, 100, 255), 0.08);
+
+    &:hover {
+      background-color: rgba(var(--interactive-accent-rgb, 120, 100, 255), 0.15);
+    }
+  }
+
+  .aide-chat-btn-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 3px;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    margin-left: 2px;
   }
 }
 
@@ -1261,11 +1316,16 @@ button.aide-chat-input-model-select {
 }
 
 .aide-similarity-search-results {
+  align-self: flex-start;
+  text-align: left;
   display: flex;
   flex-direction: column;
   font-size: var(--font-smaller);
   padding-top: var(--size-4-1);
   padding-bottom: var(--size-4-1);
+  margin-top: 6px;
+  width: fit-content;
+  max-width: 92%;
   user-select: none;
 
   .aide-similarity-search-results__trigger {
