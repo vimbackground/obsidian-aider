@@ -5,8 +5,6 @@
   - Uninstalled heavyweight unused dependencies (`react-syntax-highlighter`, `vscode-diff`), reducing the final bundle size from 0.44MB to **0.41MB**.
   - Deleted obsolete chat view components (`MarkdownCodeComponent`, `SyntaxHighlighterWrapper`) and switched to Obsidian's native `MarkdownRenderer` for standard code blocks.
   - Eliminated legacy `<smtcmp_block>` parsing logic, focusing strictly on `<think>` blocks for better regex efficiency.
-- **Upstream Smart-Composer Decoupling**:
-  - Performed a codebase-wide rename of all internal legacy classes and variables (e.g., `SmartComposerPlugin` ➔ `AiderPlugin`, `SmartComposerSettings` ➔ `AiderSettings`).
 - **Main Class (God Class) Refactoring**:
   - Extracted the massive settings validation, legacy provider filtering, and dynamic model enforcement logic from `main.ts` into a dedicated `SettingsManager` for cleaner architecture (SOLID).
 - **Version Bump**: Updated to version `4.0.2`.
@@ -16,8 +14,6 @@
   - 彻底卸载了早已过时且庞大的依赖（`react-syntax-highlighter`、`vscode-diff`），将打包产物体积由 0.44MB 进一步压榨至 **0.41MB**。
   - 清理了与上述依赖绑定的旧版聊天渲染组件，全面拥抱 Obsidian 原生的代码块渲染器（支持原生复制按钮）。
   - 去除原先兼容上游的 `<smtcmp_block>` 正则解析，精简解析流并专攻 `<think>` 思考标签，降低运行时开销。
-- **上游 “SmartComposer” 概念彻底脱耦**：
-  - 在全代码库范围内（超 30 个文件）执行重命名，将残留的 `SmartComposerPlugin`、`SmartComposerSettings` 等历史包袱统一变更为 `AiderPlugin` 与 `AiderSettings`。
 - **化解入口类 God Class 困境（架构升级）**：
   - 将原先堆积在 `main.ts` 中的数百行硬编码配置清洗、虚假服务商过滤与容错逻辑全盘抽离至独立的 `SettingsManager`，使工程架构更符合高内聚低耦合标准。
 - **版本发布**：版本号升级为 `4.0.2`。
