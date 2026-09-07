@@ -2,7 +2,7 @@ import { App, Notice, requestUrl } from 'obsidian'
 import { useState } from 'react'
 
 import { PLAN_PROVIDER_TYPES, PROVIDER_TYPES_INFO } from '../../../constants'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import {
   LLMProvider,
   LLMProviderType,
@@ -16,13 +16,13 @@ import { ObsidianToggle } from '../../common/ObsidianToggle'
 import { ReactModal } from '../../common/ReactModal'
 
 type ProviderFormComponentProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   provider: LLMProvider | null // null for new provider
   onClose: () => void
 }
 
 export class AddProviderModal extends ReactModal<ProviderFormComponentProps> {
-  constructor(app: App, plugin: SmartComposerPlugin) {
+  constructor(app: App, plugin: AiderPlugin) {
     const isZh = plugin.settings.language === 'zh'
     super({
       app: app,
@@ -36,7 +36,7 @@ export class AddProviderModal extends ReactModal<ProviderFormComponentProps> {
 }
 
 export class EditProviderModal extends ReactModal<ProviderFormComponentProps> {
-  constructor(app: App, plugin: SmartComposerPlugin, provider: LLMProvider) {
+  constructor(app: App, plugin: AiderPlugin, provider: LLMProvider) {
     const isZh = plugin.settings.language === 'zh'
     super({
       app: app,

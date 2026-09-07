@@ -1,9 +1,12 @@
 import { App, TFolder } from 'obsidian'
 import { useState } from 'react'
 
-import { RECOMMENDED_MODELS_FOR_EMBEDDING } from '../../../constants'
+import {
+  DEFAULT_SYSTEM_EXCLUDES,
+  RECOMMENDED_MODELS_FOR_EMBEDDING,
+} from '../../../constants'
 import { useSettings } from '../../../contexts/settings-context'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { findFilesMatchingPatterns } from '../../../utils/glob-utils'
 import { useI18n } from '../../../utils/i18n'
 import { ObsidianButton } from '../../common/ObsidianButton'
@@ -18,7 +21,7 @@ import { IncludedFilesModal } from '../modals/IncludedFilesModal'
 
 type RAGSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export function RAGSection({ app, plugin }: RAGSectionProps) {
@@ -28,7 +31,7 @@ export function RAGSection({ app, plugin }: RAGSectionProps) {
   const [selectedFolderToAdd, setSelectedFolderToAdd] = useState('')
 
   // 获取 Vault 中现存的所有文件夹列表（排除系统隐藏文件夹）
-  const systemFolders = [app.vault.configDir, '.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env']
+  const systemFolders = [app.vault.configDir, ...DEFAULT_SYSTEM_EXCLUDES]
   const allVaultFolders = app.vault
     .getAllLoadedFiles()
     .filter((f): f is TFolder => f instanceof TFolder && f.path !== '/')

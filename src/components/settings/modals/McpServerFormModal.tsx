@@ -4,7 +4,7 @@ import TextareaAutosize from 'react-textarea-autosize'
 import * as z from 'zod'
 
 import { validateServerName } from '../../../core/mcp/tool-name-utils'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import {
   McpServerParameters,
   mcpServerParametersSchema,
@@ -15,13 +15,13 @@ import { ObsidianTextInput } from '../../common/ObsidianTextInput'
 import { ReactModal } from '../../common/ReactModal'
 
 type McpServerFormComponentProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   onClose: () => void
   serverId?: string
 }
 
 export class AddMcpServerModal extends ReactModal<McpServerFormComponentProps> {
-  constructor(app: App, plugin: SmartComposerPlugin) {
+  constructor(app: App, plugin: AiderPlugin) {
     super({
       app: app,
       Component: McpServerFormComponent,
@@ -34,7 +34,7 @@ export class AddMcpServerModal extends ReactModal<McpServerFormComponentProps> {
 }
 
 export class EditMcpServerModal extends ReactModal<McpServerFormComponentProps> {
-  constructor(app: App, plugin: SmartComposerPlugin, editServerId: string) {
+  constructor(app: App, plugin: AiderPlugin, editServerId: string) {
     super({
       app: app,
       Component: McpServerFormComponent,

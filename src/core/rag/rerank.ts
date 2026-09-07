@@ -1,6 +1,6 @@
 import { requestUrl } from 'obsidian'
 
-import { SmartComposerSettings } from '../../settings/schema/setting.types'
+import { AiderSettings } from '../../settings/schema/setting.types'
 
 export type RerankResult = {
   index: number
@@ -19,7 +19,7 @@ export async function rerankDocuments({
 }: {
   query: string
   documents: string[]
-  settings: SmartComposerSettings
+  settings: AiderSettings
 }): Promise<RerankResult[]> {
   const rerankConfig = settings.ragOptions.rerank
   if (

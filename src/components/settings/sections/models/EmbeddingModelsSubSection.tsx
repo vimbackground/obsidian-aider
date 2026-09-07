@@ -4,7 +4,7 @@ import { ObsidianToggle } from 'src/components/common/ObsidianToggle'
 
 import { useSettings } from '../../../../contexts/settings-context'
 import { getEmbeddingModelClient } from '../../../../core/rag/embedding'
-import SmartComposerPlugin from '../../../../main'
+import AiderPlugin from '../../../../main'
 import { useI18n } from '../../../../utils/i18n'
 import { ConfirmModal } from '../../../modals/ConfirmModal'
 import { AddEmbeddingModelModal } from '../../modals/AddEmbeddingModelModal'
@@ -12,7 +12,7 @@ import { EditEmbeddingModelModal } from '../../modals/EditEmbeddingModelModal'
 
 type EmbeddingModelsSubSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 const isEnabled = (enable: boolean | undefined | null) => enable ?? true

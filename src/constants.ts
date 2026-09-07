@@ -13,6 +13,17 @@ export const RECOMMENDED_MODELS_FOR_CHAT = ['Qwen/Qwen3.5-4B']
 export const RECOMMENDED_MODELS_FOR_APPLY = ['Qwen/Qwen3.5-4B']
 export const RECOMMENDED_MODELS_FOR_EMBEDDING = ['BAAI/bge-m3']
 
+// Default system directory excludes for RAG indexing
+export const DEFAULT_SYSTEM_EXCLUDES = [
+  '.obsidian',
+  '.trash',
+  '.git',
+  '.aider',
+  '.aide',
+  '.smart-env',
+  '.smart-connections',
+]
+
 export const PLAN_PROVIDER_TYPES: readonly LLMProviderType[] = []
 export const PROVIDER_TYPES_INFO = {
   anthropic: {

@@ -1,3 +1,59 @@
+# Release Notes: v4.0.2 - Codebase Audit, Dead Code Pruning & SmartComposer Decoupling / 4.0.2 工程代码深度审查、死代码清理与上游彻底脱耦
+
+## 🌐 English
+- **Dead Code & Bloat Dependencies Pruned**:
+  - Uninstalled heavyweight unused dependencies (`react-syntax-highlighter`, `vscode-diff`), reducing the final bundle size from 0.44MB to **0.41MB**.
+  - Deleted obsolete chat view components (`MarkdownCodeComponent`, `SyntaxHighlighterWrapper`) and switched to Obsidian's native `MarkdownRenderer` for standard code blocks.
+  - Eliminated legacy `<smtcmp_block>` parsing logic, focusing strictly on `<think>` blocks for better regex efficiency.
+- **Upstream Smart-Composer Decoupling**:
+  - Performed a codebase-wide rename of all internal legacy classes and variables (e.g., `SmartComposerPlugin` ➔ `AiderPlugin`, `SmartComposerSettings` ➔ `AiderSettings`).
+- **Main Class (God Class) Refactoring**:
+  - Extracted the massive settings validation, legacy provider filtering, and dynamic model enforcement logic from `main.ts` into a dedicated `SettingsManager` for cleaner architecture (SOLID).
+- **Version Bump**: Updated to version `4.0.2`.
+
+## 🇨🇳 中文说明
+- **剔除庞大废弃依赖与无效代码（极致瘦身）**：
+  - 彻底卸载了早已过时且庞大的依赖（`react-syntax-highlighter`、`vscode-diff`），将打包产物体积由 0.44MB 进一步压榨至 **0.41MB**。
+  - 清理了与上述依赖绑定的旧版聊天渲染组件，全面拥抱 Obsidian 原生的代码块渲染器（支持原生复制按钮）。
+  - 去除原先兼容上游的 `<smtcmp_block>` 正则解析，精简解析流并专攻 `<think>` 思考标签，降低运行时开销。
+- **上游 “SmartComposer” 概念彻底脱耦**：
+  - 在全代码库范围内（超 30 个文件）执行重命名，将残留的 `SmartComposerPlugin`、`SmartComposerSettings` 等历史包袱统一变更为 `AiderPlugin` 与 `AiderSettings`。
+- **化解入口类 God Class 困境（架构升级）**：
+  - 将原先堆积在 `main.ts` 中的数百行硬编码配置清洗、虚假服务商过滤与容错逻辑全盘抽离至独立的 `SettingsManager`，使工程架构更符合高内聚低耦合标准。
+- **版本发布**：版本号升级为 `4.0.2`。
+
+---
+
+# Release Notes: v4.0.1 - Mobile Experience, Upstream Decoupling & RAG Blacklist Harmonization / 4.0.1 移动端体验优化、脱耦与 RAG 黑名单标准化
+
+## 🌐 English
+- **Mobile Experience & View Display Refinement**:
+  - **Chat View Title Alignment**: Updated `getDisplayText()` from legacy `'Smart composer chat'` to `'Aider Chat'`, ensuring proper tab and sidebar titles on Obsidian Mobile.
+  - **Responsive Input Controls**: Removed fixed height constraints on `.aide-chat-user-input-controls` and enabled flexible wrapping (`flex-wrap: wrap`) with max-width boundaries, preventing the "Article Chat" and "Vault Chat" buttons from overflowing beyond container borders on small screens.
+- **Upstream Project (Smart-Composer) Decoupling**:
+  - Corrected the settings tab navigation in `ErrorModal` to open tab ID `'aider'` instead of the defunct `'smart-composer'`.
+  - Updated bug reporting URLs to point to the current project's repository issues page (`vimbackground/obsidian-aider`).
+  - Purged unused legacy `.aide-settings-support-smart-composer` stylesheet rules.
+- **RAG System Blacklist Harmonization**:
+  - Introduced unified `DEFAULT_SYSTEM_EXCLUDES` constant across schema, settings UI, and vector manager (`.obsidian`, `.trash`, `.git`, `.aider`, `.aide`, `.smart-env`, `.smart-connections`).
+  - Guaranteed automatic exclusion of `.aider` data directory to prevent RAG indexing from inadvertently processing internal embeddings and session data.
+  - Automatically pruned obsolete `.obsidian-aider` exclusion entries in configuration migrations.
+
+## 🇨🇳 中文说明
+- **移动端视觉与排版深度优化**：
+  - **窗口标题对齐**：彻底修复手机端 Obsidian 标签页和侧边栏中依然显示为旧版“Smart composer chat”的问题，统一显示为“Aider Chat”。
+  - **输入框按钮溢出修复**：重构输入框底部控制栏布局，解除固定高度硬约束并加入弹性自适应折行（`flex-wrap: wrap`），确保“文章对话”与“全知识库对话”胶囊按钮在手机窄屏视口下优雅换行，绝不撑破边框。
+- **上游项目（Smart-Composer）历史痕迹脱耦与清理**：
+  - 修复错误弹窗中的“Open Settings”跳转逻辑，修正为当前插件 ID `'aider'`，恢复设置页面的点击直达能力。
+  - 将错误弹窗的 Bug 报告链接更新至当前项目官方仓库地址。
+  - 清除 CSS 中残留的失效类名 `.aide-settings-support-smart-composer`。
+- **RAG 系统黑名单目录统一与标准化**：
+  - 提取全局统一的系统排除目录常量 `DEFAULT_SYSTEM_EXCLUDES`，彻底收敛分散在多处的硬编码。
+  - 确保知识库索引构建时底层强制忽略 `.aider` 运行与数据目录，杜绝扫描插件自身的向量库与会话文件。
+  - 自动清理旧配置迁移中过时的 `.obsidian-aider` 历史条目。
+
+---
+
 # Release Notes: v1.0.0 - Official Milestone Release / 1.0.0 正式里程碑版本
 
 ## 🌐 English

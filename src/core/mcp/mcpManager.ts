@@ -1,4 +1,4 @@
-import { SmartComposerSettings } from '../../settings/schema/setting.types'
+import { AiderSettings } from '../../settings/schema/setting.types'
 import {
   McpServerState,
   McpTool,
@@ -19,7 +19,7 @@ export class McpManager {
   // Zero Node.js runtime dependencies: Native tools are cross-platform and work on all devices (Desktop & Mobile)
   public readonly disabled = false
 
-  private settings: SmartComposerSettings
+  private settings: AiderSettings
   private unsubscribeFromSettings: () => void
 
   private servers: McpServerState[] = []
@@ -31,9 +31,9 @@ export class McpManager {
     settings,
     registerSettingsListener,
   }: {
-    settings: SmartComposerSettings
+    settings: AiderSettings
     registerSettingsListener: (
-      listener: (settings: SmartComposerSettings) => void,
+      listener: (settings: AiderSettings) => void,
     ) => () => void
   }) {
     this.settings = settings
@@ -66,7 +66,7 @@ export class McpManager {
     return () => this.subscribers.delete(callback)
   }
 
-  public async handleSettingsUpdate(settings: SmartComposerSettings) {
+  public async handleSettingsUpdate(settings: AiderSettings) {
     this.settings = settings
     this.notifySubscribers()
   }

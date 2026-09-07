@@ -3,13 +3,13 @@ import { Root, createRoot } from 'react-dom/client'
 
 import { SettingsTabRoot } from '../components/settings/SettingsTabRoot'
 import { SettingsProvider } from '../contexts/settings-context'
-import SmartComposerPlugin from '../main'
+import AiderPlugin from '../main'
 
-export class SmartComposerSettingTab extends PluginSettingTab {
-  plugin: SmartComposerPlugin
+export class AiderSettingTab extends PluginSettingTab {
+  plugin: AiderPlugin
   private root: Root | null = null
 
-  constructor(app: App, plugin: SmartComposerPlugin) {
+  constructor(app: App, plugin: AiderPlugin) {
     super(app, plugin)
     this.plugin = plugin
   }

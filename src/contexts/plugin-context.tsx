@@ -1,9 +1,9 @@
 import React from 'react'
 
-import SmartComposerPlugin from '../main'
+import AiderPlugin from '../main'
 
 // Plugin context
-const PluginContext = React.createContext<SmartComposerPlugin | undefined>(
+const PluginContext = React.createContext<AiderPlugin | undefined>(
   undefined,
 )
 
@@ -12,7 +12,7 @@ export const PluginProvider = ({
   plugin,
 }: {
   children: React.ReactNode
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }) => {
   return (
     <PluginContext.Provider value={plugin}>{children}</PluginContext.Provider>

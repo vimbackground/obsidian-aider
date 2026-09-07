@@ -4,27 +4,22 @@ import { ChatView } from './ChatView'
 import { ChatProps } from './components/chat-view/Chat'
 import {
   CHAT_VIEW_TYPE,
-  DEFAULT_CHAT_MODELS,
-  DEFAULT_CHAT_MODEL_ID,
-  DEFAULT_EMBEDDING_MODELS,
-  DEFAULT_PROVIDERS,
-  DEFAULT_SYSTEM_PROMPT,
 } from './constants'
 import { McpManager } from './core/mcp/mcpManager'
 import { RAGEngine } from './core/rag/ragEngine'
 import { DatabaseManager } from './database/DatabaseManager'
 import {
-  SmartComposerSettings,
-  smartComposerSettingsSchema,
+  AiderSettings,
 } from './settings/schema/setting.types'
-import { parseSmartComposerSettings } from './settings/schema/settings'
-import { SmartComposerSettingTab } from './settings/SettingTab'
+import { SettingsManager } from './settings/SettingsManager'
+import { AiderSettingTab } from './settings/SettingTab'
 import { getMentionableBlockData } from './utils/obsidian'
 
-export default class SmartComposerPlugin extends Plugin {
-  settings: SmartComposerSettings
+export default class AiderPlugin extends Plugin {
+  settings: AiderSettings
   initialChatProps?: ChatProps
-  settingsChangeListeners: ((newSettings: SmartComposerSettings) => void)[] = []
+  settingsManager: SettingsManager
+  settingsChangeListeners: ((newSettings: AiderSettings) => void)[] = []
   mcpManager: McpManager | null = null
   dbManager: DatabaseManager | null = null
   ragEngine: RAGEngine | null = null
@@ -33,6 +28,7 @@ export default class SmartComposerPlugin extends Plugin {
   private timeoutIds: number[] = []
 
   async onload() {
+    this.settingsManager = new SettingsManager(this.app, this)
     await this.loadSettings()
     await this.migrateLegacyDirectories()
 
@@ -132,7 +128,7 @@ export default class SmartComposerPlugin extends Plugin {
       },
     })
     
-    this.addSettingTab(new SmartComposerSettingTab(this.app, this))
+    this.addSettingTab(new AiderSettingTab(this.app, this))
 
     // Set up background indexing listener
     this.app.workspace.onLayoutReady(() => {
@@ -185,157 +181,7 @@ export default class SmartComposerPlugin extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = parseSmartComposerSettings(await this.loadData())
-
-    // 清理历史残留的假外部内置工具配置，并对真实外部服务做严格去重
-    const currentServers = this.settings.mcp?.servers || []
-    const seenIds = new Set<string>()
-    const deduplicatedServers = []
-    let hasChanges = false
-
-    for (const server of currentServers) {
-      if (!server || !server.id) continue
-      const lowerId = server.id.toLowerCase()
-      // 过滤旧版写入外部列表中的内置工具假配置
-      if (
-        lowerId.includes('bing-cn-search') ||
-        lowerId.includes('web-fetch') ||
-        lowerId.includes('weather-service') ||
-        lowerId.includes('arxiv-search') ||
-        lowerId.includes('time-service')
-      ) {
-        hasChanges = true
-        continue
-      }
-      if (!seenIds.has(server.id)) {
-        seenIds.add(server.id)
-        deduplicatedServers.push(server)
-      } else {
-        hasChanges = true
-      }
-    }
-
-    if (hasChanges || deduplicatedServers.length !== currentServers.length) {
-      this.settings.mcp.servers = deduplicatedServers
-    }
-
-    // 1. 确保默认系统提示词非空
-    if (!this.settings.systemPrompt || !this.settings.systemPrompt.trim()) {
-      this.settings.systemPrompt = DEFAULT_SYSTEM_PROMPT
-    }
-
-    // 2. 服务商精简：仅保留 openai, deepseek, openrouter, siliconflow，过滤未填写 Key 的其余服务商
-    const allowedProviderTypes = new Set(['openai', 'deepseek', 'openrouter', 'siliconflow'])
-    const existingProviders = this.settings.providers || []
-    const filteredProviders = existingProviders.filter((p) => {
-      if (allowedProviderTypes.has(p.type)) return true
-      return Boolean(p.apiKey && p.apiKey.trim() !== '')
-    })
-    for (const defaultProvider of DEFAULT_PROVIDERS) {
-      if (!filteredProviders.some((p) => p.type === defaultProvider.type)) {
-        filteredProviders.push({ ...defaultProvider })
-      }
-    }
-    this.settings.providers = filteredProviders
-
-    // 3. 嵌入模型清理：彻底过滤遗留内置嵌入模型，默认仅保留 SiliconFlow 的 BAAI/bge-m3
-    const legacyEmbeddingModelIds = new Set([
-      'openai/text-embedding-3-small',
-      'openai/text-embedding-3-large',
-      'gemini/text-embedding-004',
-      'ollama/nomic-embed-text',
-      'ollama/mxbai-embed-large',
-      'ollama/bge-m3',
-      'bge-m3',
-    ])
-    let currentEmbeddingModels = (this.settings.embeddingModels || []).filter(
-      (m) => !legacyEmbeddingModelIds.has(m.id),
-    )
-    for (const defaultModel of DEFAULT_EMBEDDING_MODELS) {
-      const existing = currentEmbeddingModels.find(
-        (m) => m.id === defaultModel.id || m.model === defaultModel.model,
-      )
-      if (!existing) {
-        currentEmbeddingModels.push({ ...defaultModel })
-      } else {
-        existing.enable = true
-      }
-    }
-    this.settings.embeddingModels = currentEmbeddingModels
-
-    if (
-      !this.settings.embeddingModelId ||
-      legacyEmbeddingModelIds.has(this.settings.embeddingModelId) ||
-      !this.settings.embeddingModels.some((m) => m.id === this.settings.embeddingModelId)
-    ) {
-      this.settings.embeddingModelId = ''
-    }
-
-    // 4. 对话模型清理：仅保留 Qwen/Qwen3.5-4B 以及用户已配置 API Key 的模型，其它默认模型不要添加
-    const hasAnthropicKey = filteredProviders.some(
-      (p) => p.type === 'anthropic' && Boolean(p.apiKey && p.apiKey.trim() !== ''),
-    )
-    const configuredProviderIds = new Set(
-      filteredProviders
-        .filter((p) => Boolean(p.apiKey && p.apiKey.trim() !== ''))
-        .map((p) => p.id),
-    )
-    const configuredProviderTypes = new Set(
-      filteredProviders
-        .filter((p) => Boolean(p.apiKey && p.apiKey.trim() !== ''))
-        .map((p) => p.type),
-    )
-    let currentChatModels = (this.settings.chatModels || []).filter((m) => {
-      if (m.id === DEFAULT_CHAT_MODEL_ID) return true
-      const providerTypeStr = m.providerType as string
-      if (
-        providerTypeStr === 'anthropic-plan' ||
-        providerTypeStr === 'openai-plan' ||
-        providerTypeStr === 'gemini-plan'
-      ) {
-        return false
-      }
-      if (m.providerType === 'groq' && m.id === 'qwen/qwen3.8-27b') return false
-      if (m.id === 'deepseek-ai/DeepSeek-V4-Flash') return false
-      return (
-        configuredProviderIds.has(m.providerId) ||
-        configuredProviderTypes.has(m.providerType)
-      )
-    })
-    for (const defaultModel of DEFAULT_CHAT_MODELS) {
-      const existing = currentChatModels.find(
-        (m) => m.id === defaultModel.id || m.model === defaultModel.model,
-      )
-      if (!existing) {
-        currentChatModels.push({ ...defaultModel })
-      } else {
-        existing.enable = true
-      }
-    }
-    this.settings.chatModels = currentChatModels
-
-    // 确保默认对话模型设置：若为 Claude 或不存在则重置为默认 Qwen/Qwen3.5-4B
-    if (
-      !this.settings.chatModelId ||
-      (!hasAnthropicKey && this.settings.chatModelId.toLowerCase().includes('claude')) ||
-      this.settings.chatModelId === 'deepseek-ai/DeepSeek-V4-Flash' ||
-      !currentChatModels.some((m) => m.id === this.settings.chatModelId)
-    ) {
-      this.settings.chatModelId = DEFAULT_CHAT_MODEL_ID
-    }
-
-    // 3. 步数上限提至 5 步，服务层级默认为 eco (免费层模式)
-    if (
-      !this.settings.chatOptions.maxAutoIterations ||
-      this.settings.chatOptions.maxAutoIterations < 5
-    ) {
-      this.settings.chatOptions.maxAutoIterations = 5
-    }
-    if (!this.settings.chatOptions.runtimeProfile) {
-      this.settings.chatOptions.runtimeProfile = 'eco'
-    }
-
-    await this.saveData(this.settings) // Save updated settings
+    this.settings = await this.settingsManager.loadSettings()
 
     // 4. 自动初始化 Obsidian 场景专属预设提示词模板（统一中英双语格式）
     try {
@@ -349,23 +195,16 @@ export default class SmartComposerPlugin extends Plugin {
     }
   }
 
-  async setSettings(newSettings: SmartComposerSettings) {
-    const validationResult = smartComposerSettingsSchema.safeParse(newSettings)
-
-    if (!validationResult.success) {
-      new Notice(`Invalid settings:
-${validationResult.error.issues.map((v) => v.message).join('\n')}`)
-      return
+  async setSettings(newSettings: AiderSettings) {
+    if (await this.settingsManager.setSettings(newSettings)) {
+      this.settings = newSettings
+      this.ragEngine?.setSettings(newSettings)
+      this.settingsChangeListeners.forEach((listener) => listener(newSettings))
     }
-
-    this.settings = newSettings
-    await this.saveData(newSettings)
-    this.ragEngine?.setSettings(newSettings)
-    this.settingsChangeListeners.forEach((listener) => listener(newSettings))
   }
 
   addSettingsChangeListener(
-    listener: (newSettings: SmartComposerSettings) => void,
+    listener: (newSettings: AiderSettings) => void,
   ) {
     this.settingsChangeListeners.push(listener)
     return () => {
@@ -485,7 +324,7 @@ ${validationResult.error.issues.map((v) => v.message).join('\n')}`)
       this.mcpManager = new McpManager({
         settings: this.settings,
         registerSettingsListener: (
-          listener: (settings: SmartComposerSettings) => void,
+          listener: (settings: AiderSettings) => void,
         ) => this.addSettingsChangeListener(listener),
       })
       await this.mcpManager.initialize()

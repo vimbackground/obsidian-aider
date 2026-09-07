@@ -3,8 +3,8 @@ import { App } from 'obsidian'
 import { AppProvider } from '../../contexts/app-context'
 import { SettingsProvider } from '../../contexts/settings-context'
 import { Template } from '../../database/json/template/types'
-import SmartComposerPlugin from '../../main'
-import { smartComposerSettingsSchema } from '../../settings/schema/setting.types'
+import AiderPlugin from '../../main'
+import { aiderSettingsSchema } from '../../settings/schema/setting.types'
 import { ReactModal } from '../common/ReactModal'
 import { TemplateSection } from '../settings/sections/TemplateSection'
 
@@ -19,7 +19,7 @@ function TemplateSectionModalWrapper({
 }: TemplateSectionModalProps) {
   const appWithPlugins = app as unknown as {
     plugins?: {
-      getPlugin?: (id: string) => SmartComposerPlugin | undefined
+      getPlugin?: (id: string) => AiderPlugin | undefined
     }
   }
   const plugin = appWithPlugins.plugins?.getPlugin?.('aider')
@@ -40,7 +40,7 @@ function TemplateSectionModalWrapper({
     )
   }
 
-  const defaultSettings = smartComposerSettingsSchema.parse({})
+  const defaultSettings = aiderSettingsSchema.parse({})
   return (
     <AppProvider app={app}>
       <SettingsProvider

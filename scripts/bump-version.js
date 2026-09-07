@@ -15,7 +15,9 @@ const oldVersion = pkg.version || '0.1.0';
 const [major, minor, patch] = oldVersion.split('.').map((num) => parseInt(num, 10));
 
 let newVersion = '';
-if (type === 'major') {
+if (/^\d+\.\d+\.\d+/.test(type)) {
+  newVersion = type;
+} else if (type === 'major') {
   newVersion = `${major + 1}.0.0`;
 } else if (type === 'minor') {
   newVersion = `${major}.${minor + 1}.0`;

@@ -1,6 +1,6 @@
 import { App } from 'obsidian'
 
-import SmartComposerPlugin from '../../main'
+import AiderPlugin from '../../main'
 
 import { ChatSection } from './sections/ChatSection'
 import { EtcSection } from './sections/EtcSection'
@@ -12,7 +12,7 @@ import { TemplateSection } from './sections/TemplateSection'
 
 type SettingsTabRootProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export function SettingsTabRoot({ app, plugin }: SettingsTabRootProps) {

@@ -323,7 +323,7 @@ const ragOptionsSchema = z.object({
   excludePatterns: z.array(z.string()).catch([]),
   includePatterns: z.array(z.string()).catch([]),
 })
-const smartComposerSettingsSchemaV1 = z.object({
+const aiderSettingsSchemaV1 = z.object({
   // Version
   version: z.literal(SETTINGS_SCHEMA_VERSION).catch(SETTINGS_SCHEMA_VERSION),
 
@@ -379,7 +379,7 @@ const smartComposerSettingsSchemaV1 = z.object({
     includePatterns: [],
   }),
 })
-type SmartComposerSettingsV1 = z.infer<typeof smartComposerSettingsSchemaV1>
+type AiderSettingsV1 = z.infer<typeof aiderSettingsSchemaV1>
 
 /**
  * V2 constants
@@ -597,7 +597,7 @@ export const V2_DEFAULT_EMBEDDING_MODELS: readonly V2EmbeddingModel[] = [
 ]
 
 export const migrateFrom1To2: SettingMigration['migrate'] = (rawData) => {
-  const data = smartComposerSettingsSchemaV1.parse(rawData)
+  const data = aiderSettingsSchemaV1.parse(rawData)
   const providers: V2LLMProvider[] = [...V2_DEFAULT_PROVIDERS]
   const chatModels: V2ChatModel[] = [...V2_DEFAULT_CHAT_MODELS]
 

@@ -9,8 +9,8 @@ import { AppProvider } from '../../contexts/app-context'
 import { SettingsProvider } from '../../contexts/settings-context'
 import { DuplicateTemplateException } from '../../database/json/exception'
 import { TemplateManager } from '../../database/json/template/TemplateManager'
-import SmartComposerPlugin from '../../main'
-import { smartComposerSettingsSchema } from '../../settings/schema/setting.types'
+import AiderPlugin from '../../main'
+import { aiderSettingsSchema } from '../../settings/schema/setting.types'
 import { useI18n } from '../../utils/i18n'
 import LexicalContentEditable from '../chat-view/chat-input/LexicalContentEditable'
 import { ObsidianButton } from '../common/ObsidianButton'
@@ -84,7 +84,7 @@ function TemplateFormComponentWrapper({
   onClose,
 }: TemplateFormComponentProps) {
   const plugin = (app as any).plugins?.getPlugin?.('aider') as
-    | SmartComposerPlugin
+    | AiderPlugin
     | undefined
 
   const content = (
@@ -113,7 +113,7 @@ function TemplateFormComponentWrapper({
     )
   }
 
-  const defaultSettings = smartComposerSettingsSchema.parse({})
+  const defaultSettings = aiderSettingsSchema.parse({})
   return (
     <AppProvider app={app}>
       <SettingsProvider

@@ -1,7 +1,7 @@
 import { App } from 'obsidian'
 import React from 'react'
 
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { useI18n } from '../../../utils/i18n'
 
 import { ChatModelsSubSection } from './models/ChatModelsSubSection'
@@ -10,7 +10,7 @@ import { RerankModelsSubSection } from './models/RerankModelsSubSection'
 
 type ModelsSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export function ModelsSection({ app, plugin }: ModelsSectionProps) {

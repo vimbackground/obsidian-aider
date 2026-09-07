@@ -2,7 +2,7 @@ import { App } from 'obsidian'
 
 import { QueryProgressState } from '../../components/chat-view/QueryProgress'
 import { VectorManager } from '../../database/modules/vector/VectorManager'
-import { SmartComposerSettings } from '../../settings/schema/setting.types'
+import { AiderSettings } from '../../settings/schema/setting.types'
 import { EmbeddingModelClient } from '../../types/embedding'
 import { SelectEmbedding } from '../../types/vector.types'
 
@@ -12,13 +12,13 @@ import { rerankDocuments } from './rerank'
 // TODO: do we really need this class? It seems like unnecessary abstraction.
 export class RAGEngine {
   private app: App
-  private settings: SmartComposerSettings
+  private settings: AiderSettings
   private vectorManager: VectorManager | null = null
   private embeddingModel: EmbeddingModelClient | null = null
 
   constructor(
     app: App,
-    settings: SmartComposerSettings,
+    settings: AiderSettings,
     vectorManager: VectorManager,
   ) {
     this.app = app
@@ -36,7 +36,7 @@ export class RAGEngine {
   }
 
   // TODO: use addSettingsChangeListener
-  setSettings(settings: SmartComposerSettings) {
+  setSettings(settings: AiderSettings) {
     this.settings = settings
     this.embeddingModel = getEmbeddingModelClient({
       settings,

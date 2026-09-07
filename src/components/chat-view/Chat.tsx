@@ -1,7 +1,7 @@
 import { CircleStop, FileText, History, Sparkles } from 'lucide-react'
 import { App, Notice } from 'obsidian'
 
-import { SmartComposerSettings } from '../../settings/schema/setting.types'
+import { AiderSettings } from '../../settings/schema/setting.types'
 import { useI18n } from '../../utils/i18n'
 import { RagQuickSetupModal } from '../settings/modals/RagQuickSetupModal'
 import {
@@ -325,7 +325,7 @@ const Chat = forwardRef<ChatRef, ChatProps>((props, ref) => {
     }: {
       inputChatMessages: ChatMessage[]
       useVaultSearch?: boolean
-      currentSettings?: SmartComposerSettings
+      currentSettings?: AiderSettings
     }) => {
       const activeSettings = currentSettings ?? settings
       // 如果触发了全知识库对话，验证 RAG 开关与嵌入模型配置

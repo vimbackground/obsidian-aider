@@ -8,7 +8,7 @@ import {
 } from '../../../constants'
 import { useSettings } from '../../../contexts/settings-context'
 import { getEmbeddingModelClient } from '../../../core/rag/embedding'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { LLMProvider } from '../../../types/provider.types'
 import { useI18n } from '../../../utils/i18n'
 import { ConfirmModal } from '../../modals/ConfirmModal'
@@ -19,7 +19,7 @@ import {
 
 type ProvidersSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export function ProvidersSection({ app, plugin }: ProvidersSectionProps) {

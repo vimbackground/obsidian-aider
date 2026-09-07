@@ -3,7 +3,7 @@ import { App, TFile, htmlToMarkdown, requestUrl } from 'obsidian'
 import { editorStateToPlainText } from '../../components/chat-view/chat-input/utils/editor-state-to-plain-text'
 import { QueryProgressState } from '../../components/chat-view/QueryProgress'
 import { RAGEngine } from '../../core/rag/ragEngine'
-import { SmartComposerSettings } from '../../settings/schema/setting.types'
+import { AiderSettings } from '../../settings/schema/setting.types'
 import {
   ChatAssistantMessage,
   ChatMessage,
@@ -46,7 +46,7 @@ function sanitizeMarkdownForLLM(content: string): string {
 export class PromptGenerator {
   private getRagEngine: () => Promise<RAGEngine>
   private app: App
-  private settings: SmartComposerSettings
+  private settings: AiderSettings
 
   private getMaxContextMessages(): number {
     const isEco = (this.settings.chatOptions.runtimeProfile ?? 'eco') === 'eco'
@@ -56,7 +56,7 @@ export class PromptGenerator {
   constructor(
     getRagEngine: () => Promise<RAGEngine>,
     app: App,
-    settings: SmartComposerSettings,
+    settings: AiderSettings,
   ) {
     this.getRagEngine = getRagEngine
     this.app = app

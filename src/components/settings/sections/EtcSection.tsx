@@ -1,8 +1,8 @@
 import { App, Notice } from 'obsidian'
 
 import { useSettings } from '../../../contexts/settings-context'
-import SmartComposerPlugin from '../../../main'
-import { smartComposerSettingsSchema } from '../../../settings/schema/setting.types'
+import AiderPlugin from '../../../main'
+import { aiderSettingsSchema } from '../../../settings/schema/setting.types'
 import { useI18n } from '../../../utils/i18n'
 import { ObsidianButton } from '../../common/ObsidianButton'
 import { ObsidianDropdown } from '../../common/ObsidianDropdown'
@@ -11,7 +11,7 @@ import { ConfirmModal } from '../../modals/ConfirmModal'
 
 type EtcSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export function EtcSection({ app }: EtcSectionProps) {
@@ -25,7 +25,7 @@ export function EtcSection({ app }: EtcSectionProps) {
         '确定要重置所有设置为默认值吗？此操作无法撤销。',
       ctaText: t('common.reset'),
       onConfirm: async () => {
-        const defaultSettings = smartComposerSettingsSchema.parse({})
+        const defaultSettings = aiderSettingsSchema.parse({})
         await setSettings(defaultSettings)
         new Notice('所有设置已重置为默认值')
       },

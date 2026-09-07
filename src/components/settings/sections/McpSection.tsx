@@ -1,13 +1,13 @@
 import { App } from 'obsidian'
 
 import { useSettings } from '../../../contexts/settings-context'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { getLanguage } from '../../../utils/i18n'
 import { ObsidianToggle } from '../../common/ObsidianToggle'
 
 type McpSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 type BuiltinToolInfo = {

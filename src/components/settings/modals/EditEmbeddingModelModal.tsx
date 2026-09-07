@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { PROVIDER_TYPES_INFO } from '../../../constants'
 import { getProviderClient } from '../../../core/llm/manager'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import {
   EmbeddingModel,
   embeddingModelSchema,
@@ -16,7 +16,7 @@ import { ObsidianToggle } from '../../common/ObsidianToggle'
 import { ReactModal } from '../../common/ReactModal'
 
 type EditEmbeddingModelModalProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   embeddingModel: EmbeddingModel
   onClose: () => void
 }
@@ -24,7 +24,7 @@ type EditEmbeddingModelModalProps = {
 export class EditEmbeddingModelModal extends ReactModal<EditEmbeddingModelModalProps> {
   constructor(
     app: App,
-    plugin: SmartComposerPlugin,
+    plugin: AiderPlugin,
     embeddingModel: EmbeddingModel,
   ) {
     super({

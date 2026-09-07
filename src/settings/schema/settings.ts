@@ -1,7 +1,7 @@
 import { SETTINGS_SCHEMA_VERSION, SETTING_MIGRATIONS } from './migrations'
 import {
-  SmartComposerSettings,
-  smartComposerSettingsSchema,
+  AiderSettings,
+  aiderSettingsSchema,
 } from './setting.types'
 
 function migrateSettings(
@@ -24,14 +24,14 @@ function migrateSettings(
   return currentData
 }
 
-export function parseSmartComposerSettings(
+export function parseAiderSettings(
   data: unknown,
-): SmartComposerSettings {
+): AiderSettings {
   try {
     const migratedData = migrateSettings(data as Record<string, unknown>)
-    return smartComposerSettingsSchema.parse(migratedData)
+    return aiderSettingsSchema.parse(migratedData)
   } catch (error) {
     console.warn('Invalid settings provided, using defaults:', error)
-    return smartComposerSettingsSchema.parse({})
+    return aiderSettingsSchema.parse({})
   }
 }

@@ -2,7 +2,7 @@ import { App, Notice, requestUrl } from 'obsidian'
 import { useState } from 'react'
 
 import { DEFAULT_PROVIDERS, PROVIDER_TYPES_INFO } from '../../../constants'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { RerankModel, rerankModelSchema } from '../../../settings/schema/setting.types'
 import { ObsidianButton } from '../../common/ObsidianButton'
 import { ObsidianDropdown } from '../../common/ObsidianDropdown'
@@ -12,12 +12,12 @@ import { ObsidianToggle } from '../../common/ObsidianToggle'
 import { ReactModal } from '../../common/ReactModal'
 
 type AddRerankModelModalProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   onClose: () => void
 }
 
 export class AddRerankModelModal extends ReactModal<AddRerankModelModalProps> {
-  constructor(app: App, plugin: SmartComposerPlugin) {
+  constructor(app: App, plugin: AiderPlugin) {
     super({
       app: app,
       Component: AddRerankModelComponent,

@@ -1,7 +1,7 @@
 import { App, Notice } from 'obsidian'
 import { useState } from 'react'
 
-import { SmartComposerSettings } from '../../../settings/schema/setting.types'
+import { AiderSettings } from '../../../settings/schema/setting.types'
 import { getLanguage } from '../../../utils/i18n'
 import { ObsidianButton } from '../../common/ObsidianButton'
 import { ObsidianDropdown } from '../../common/ObsidianDropdown'
@@ -10,15 +10,15 @@ import { ObsidianToggle } from '../../common/ObsidianToggle'
 import { ReactModal } from '../../common/ReactModal'
 
 export type RagQuickSetupModalOptions = {
-  settings: SmartComposerSettings
-  onSave: (newSettings: SmartComposerSettings) => Promise<void>
-  onSuccess?: (savedSettings: SmartComposerSettings) => void
+  settings: AiderSettings
+  onSave: (newSettings: AiderSettings) => Promise<void>
+  onSuccess?: (savedSettings: AiderSettings) => void
 }
 
 type RagQuickSetupComponentProps = {
-  settings: SmartComposerSettings
-  onSave: (newSettings: SmartComposerSettings) => Promise<void>
-  onSuccess?: (savedSettings: SmartComposerSettings) => void
+  settings: AiderSettings
+  onSave: (newSettings: AiderSettings) => Promise<void>
+  onSuccess?: (savedSettings: AiderSettings) => void
   onClose: () => void
 }
 
@@ -109,7 +109,7 @@ function RagQuickSetupComponent({
         (m) => m.id === rerankModelId,
       )
 
-      const updatedSettings: SmartComposerSettings = {
+      const updatedSettings: AiderSettings = {
         ...settings,
         embeddingModelId: embeddingModelId,
         ragOptions: {

@@ -2,7 +2,7 @@ import { App, Notice, requestUrl } from 'obsidian'
 import { useState } from 'react'
 
 import { PROVIDER_TYPES_INFO } from '../../../constants'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import {
   RerankModel,
   rerankModelSchema,
@@ -15,7 +15,7 @@ import { ObsidianToggle } from '../../common/ObsidianToggle'
 import { ReactModal } from '../../common/ReactModal'
 
 type EditRerankModelModalProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   rerankModel: RerankModel
   onClose: () => void
 }
@@ -23,7 +23,7 @@ type EditRerankModelModalProps = {
 export class EditRerankModelModal extends ReactModal<EditRerankModelModalProps> {
   constructor(
     app: App,
-    plugin: SmartComposerPlugin,
+    plugin: AiderPlugin,
     rerankModel: RerankModel,
   ) {
     super({

@@ -1,4 +1,7 @@
-import { DEFAULT_SYSTEM_PROMPT } from '../../../constants'
+import {
+  DEFAULT_SYSTEM_EXCLUDES,
+  DEFAULT_SYSTEM_PROMPT,
+} from '../../../constants'
 import { SettingMigration } from '../setting.types'
 
 const LEGACY_DEFAULT_EMBEDDING_MODEL_IDS = new Set([
@@ -168,19 +171,13 @@ export const migrateFrom16To17: SettingMigration['migrate'] = (data) => {
     if (rag.enabled === undefined) {
       rag.enabled = false
     }
-    const currentExcludes = Array.isArray(rag.excludePatterns)
+    const currentExcludes = (Array.isArray(rag.excludePatterns)
       ? (rag.excludePatterns as string[])
       : []
-    const defaultExcludes = [
-      '.obsidian',
-      '.trash',
-      '.git',
-      '.smart-env',
-      '.smart-connections',
-      '.obsidian-aider',
-    ]
+    ).filter((pattern) => pattern !== '.obsidian-aider')
+
     const mergedExcludes = Array.from(
-      new Set([...currentExcludes, ...defaultExcludes]),
+      new Set([...currentExcludes, ...DEFAULT_SYSTEM_EXCLUDES]),
     )
     rag.excludePatterns = mergedExcludes
   }

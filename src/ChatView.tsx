@@ -14,7 +14,7 @@ import { McpProvider } from './contexts/mcp-context'
 import { PluginProvider } from './contexts/plugin-context'
 import { RAGProvider } from './contexts/rag-context'
 import { SettingsProvider } from './contexts/settings-context'
-import SmartComposerPlugin from './main'
+import AiderPlugin from './main'
 import { MentionableBlockData } from './types/mentionable'
 
 export class ChatView extends ItemView {
@@ -24,7 +24,7 @@ export class ChatView extends ItemView {
 
   constructor(
     leaf: WorkspaceLeaf,
-    private plugin: SmartComposerPlugin,
+    private plugin: AiderPlugin,
   ) {
     super(leaf)
     this.initialChatProps = plugin.initialChatProps
@@ -39,7 +39,7 @@ export class ChatView extends ItemView {
   }
 
   getDisplayText() {
-    return 'Smart composer chat'
+    return 'Aider Chat'
   }
 
   async onOpen() {

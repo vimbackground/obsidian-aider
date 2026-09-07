@@ -4,6 +4,7 @@ import {
   DEFAULT_CHAT_MODEL_ID,
   DEFAULT_EMBEDDING_MODELS,
   DEFAULT_PROVIDERS,
+  DEFAULT_SYSTEM_EXCLUDES,
   DEFAULT_SYSTEM_PROMPT,
 } from '../../constants'
 
@@ -12,11 +13,11 @@ import {
   DEFAULT_BUILTIN_TOOLS,
   DEFAULT_RERANK_MODELS,
 } from './setting.types'
-import { parseSmartComposerSettings } from './settings'
+import { parseAiderSettings } from './settings'
 
-describe('parseSmartComposerSettings', () => {
+describe('parseAiderSettings', () => {
   it('should return default values for empty input', () => {
-    const result = parseSmartComposerSettings({})
+    const result = parseAiderSettings({})
     expect(result).toEqual({
       version: SETTINGS_SCHEMA_VERSION,
 
@@ -39,14 +40,7 @@ describe('parseSmartComposerSettings', () => {
         minSimilarity: 0.0,
         limit: 10,
         filterMode: 'blacklist',
-        excludePatterns: [
-          '.obsidian',
-          '.trash',
-          '.git',
-          '.smart-env',
-          '.smart-connections',
-          '.obsidian-aider',
-        ],
+        excludePatterns: [...DEFAULT_SYSTEM_EXCLUDES],
         includePatterns: [],
         backgroundIndexing: false,
         rerank: {

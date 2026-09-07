@@ -2,7 +2,7 @@ import { App, Notice, requestUrl } from 'obsidian'
 import { useState } from 'react'
 
 import { PROVIDER_TYPES_INFO } from '../../../constants'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { ChatModel, chatModelSchema } from '../../../types/chat-model.types'
 import { ObsidianButton } from '../../common/ObsidianButton'
 import { ObsidianDropdown } from '../../common/ObsidianDropdown'
@@ -11,13 +11,13 @@ import { ObsidianTextInput } from '../../common/ObsidianTextInput'
 import { ReactModal } from '../../common/ReactModal'
 
 type EditChatModelModalProps = {
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
   chatModel: ChatModel
   onClose: () => void
 }
 
 export class EditChatModelModal extends ReactModal<EditChatModelModalProps> {
-  constructor(app: App, plugin: SmartComposerPlugin, chatModel: ChatModel) {
+  constructor(app: App, plugin: AiderPlugin, chatModel: ChatModel) {
     super({
       app: app,
       Component: EditChatModelComponent,

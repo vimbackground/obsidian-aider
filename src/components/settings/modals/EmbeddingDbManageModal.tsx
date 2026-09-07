@@ -19,18 +19,18 @@ import {
   useSettings,
 } from '../../../contexts/settings-context'
 import { getEmbeddingModelClient } from '../../../core/rag/embedding'
-import SmartComposerPlugin from '../../../main'
+import AiderPlugin from '../../../main'
 import { EmbeddingDbStats } from '../../../types/embedding'
 import { IndexProgress } from '../../chat-view/QueryProgress'
 import { ReactModal } from '../../common/ReactModal'
 
 type EmbeddingDbManagerModalComponentWrapperProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 export class EmbeddingDbManageModal extends ReactModal<EmbeddingDbManagerModalComponentWrapperProps> {
-  constructor(app: App, plugin: SmartComposerPlugin) {
+  constructor(app: App, plugin: AiderPlugin) {
     super({
       app: app,
       Component: EmbeddingDbManagerModalComponentWrapper,

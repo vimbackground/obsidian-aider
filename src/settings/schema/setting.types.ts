@@ -6,6 +6,7 @@ import {
   DEFAULT_CHAT_MODEL_ID,
   DEFAULT_EMBEDDING_MODELS,
   DEFAULT_PROVIDERS,
+  DEFAULT_SYSTEM_EXCLUDES,
   DEFAULT_SYSTEM_PROMPT,
 } from '../../constants'
 import { chatModelSchema } from '../../types/chat-model.types'
@@ -57,7 +58,7 @@ const ragOptionsSchema = z.object({
   minSimilarity: z.number().catch(0.0),
   limit: z.number().catch(10),
   filterMode: z.enum(['blacklist', 'whitelist']).catch('blacklist'),
-  excludePatterns: z.array(z.string()).catch(['.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env']),
+  excludePatterns: z.array(z.string()).catch([...DEFAULT_SYSTEM_EXCLUDES]),
   includePatterns: z.array(z.string()).catch([]),
   backgroundIndexing: z.boolean().catch(false),
   rerank: rerankOptionsSchema.catch({
@@ -73,7 +74,7 @@ const ragOptionsSchema = z.object({
  * Settings
  */
 
-export const smartComposerSettingsSchema = z.object({
+export const aiderSettingsSchema = z.object({
   // Version
   version: z.literal(SETTINGS_SCHEMA_VERSION).catch(SETTINGS_SCHEMA_VERSION),
 
@@ -104,7 +105,7 @@ export const smartComposerSettingsSchema = z.object({
     minSimilarity: 0.0,
     limit: 10,
     filterMode: 'blacklist',
-    excludePatterns: ['.obsidian', '.aider', '.aide', '.trash', '.git', '.smart-env'],
+    excludePatterns: [...DEFAULT_SYSTEM_EXCLUDES],
     includePatterns: [],
     backgroundIndexing: false,
     rerank: {
@@ -146,7 +147,7 @@ export const smartComposerSettingsSchema = z.object({
 
   language: z.enum(['en', 'zh', 'zh-CN', 'auto']).catch('auto'),
 })
-export type SmartComposerSettings = z.infer<typeof smartComposerSettingsSchema>
+export type AiderSettings = z.infer<typeof aiderSettingsSchema>
 
 export type SettingMigration = {
   fromVersion: number

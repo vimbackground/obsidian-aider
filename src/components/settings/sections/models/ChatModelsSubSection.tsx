@@ -3,7 +3,7 @@ import { App, Notice } from 'obsidian'
 import { ObsidianToggle } from 'src/components/common/ObsidianToggle'
 
 import { useSettings } from '../../../../contexts/settings-context'
-import SmartComposerPlugin from '../../../../main'
+import AiderPlugin from '../../../../main'
 import { useI18n } from '../../../../utils/i18n'
 import { ConfirmModal } from '../../../modals/ConfirmModal'
 import { AddChatModelModal } from '../../modals/AddChatModelModal'
@@ -16,7 +16,7 @@ import {
 
 type ChatModelsSubSectionProps = {
   app: App
-  plugin: SmartComposerPlugin
+  plugin: AiderPlugin
 }
 
 const isEnabled = (enable: boolean | undefined | null) => enable ?? true
